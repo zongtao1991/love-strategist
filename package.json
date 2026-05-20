@@ -1,0 +1,22 @@
+{
+  "name": "love-strategist",
+  "version": "2.0.0",
+  "description": "恋爱军师 - 智能恋爱对话辅助系统",
+  "private": true,
+  "scripts": {
+    "install:all": "cd backend && npm install",
+    "start": "cd backend && npm start",
+    "dev": "cd backend && npm run dev",
+    "start:backend": "cd backend && npm start",
+    "dev:backend": "cd backend && npm run dev"
+  },
+  "keywords": [
+    "love",
+    "dating",
+    "chat",
+    "ai",
+    "strategy"
+  ],
+  "author": "",
+  "license": "MIT"
+}

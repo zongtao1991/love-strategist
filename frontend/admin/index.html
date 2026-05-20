@@ -1,0 +1,855 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>恋爱军师 - 管理后台</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+:root{--bg:#0b0b12;--s1:#12121e;--s2:#1a1a2e;--s3:#222240;--bd:#2a2a4a;--t:#e8e8f0;--td:#8888aa;--tm:#555570;--ac:#7c5cff;--pk:#ff6b9d;--gn:#00d4aa;--r:12px}
+body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;background:var(--bg);color:var(--t);min-height:100vh}
+button{cursor:pointer;border:none;font-family:inherit;font-size:inherit;background:none;color:inherit}
+input,textarea,select{font-family:inherit}
+::-webkit-scrollbar{width:5px}::-webkit-scrollbar-thumb{background:var(--bd);border-radius:3px}
+
+.sidebar{position:fixed;left:0;top:0;bottom:0;width:220px;background:var(--s1);border-right:1px solid var(--bd);padding:20px 0;display:flex;flex-direction:column}
+.logo{padding:0 20px;margin-bottom:30px}
+.logo h1{font-size:18px;font-weight:800;background:linear-gradient(135deg,var(--ac),var(--pk));-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+.logo p{font-size:12px;color:var(--td);margin-top:4px}
+
+.nav{flex:1}
+.nav button{width:100%;text-align:left;padding:12px 24px;color:var(--td);font-size:14px;display:flex;align-items:center;gap:10px;transition:.2s}
+.nav button:hover{background:var(--s2);color:var(--t)}
+.nav button.on{background:var(--ac);color:#fff}
+.nav button .icon{font-size:16px}
+
+.user-info{padding:16px 20px;border-top:1px solid var(--bd)}
+.user-info p{font-size:12px;color:var(--td)}
+.user-info .role{display:inline-block;background:#00d4aa22;color:var(--gn);padding:2px 8px;border-radius:4px;font-size:11px;margin-top:4px}
+.user-info button{margin-top:10px;color:var(--td);font-size:12px}
+.user-info button:hover{color:var(--pk)}
+
+.main{margin-left:220px;min-height:100vh}
+.header{padding:16px 24px;background:var(--s1);border-bottom:1px solid var(--bd);display:flex;align-items:center;gap:16px}
+.header h2{font-size:18px;font-weight:600}
+.header .refresh{margin-left:auto;padding:6px 16px;background:var(--s2);border:1px solid var(--bd);border-radius:6px;font-size:13px;color:var(--td)}
+.header .refresh:hover{border-color:var(--ac);color:var(--t)}
+
+.content{padding:24px}
+.page{display:none}.page.on{display:block}
+
+.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin-bottom:24px}
+.stat-card{background:var(--s2);border:1px solid var(--bd);border-radius:var(--r);padding:20px}
+.stat-card .num{font-size:28px;font-weight:700;color:var(--ac)}
+.stat-card .label{font-size:13px;color:var(--td);margin-top:4px}
+.stat-card .change{font-size:12px;margin-top:8px}
+.stat-card .change.up{color:var(--gn)}
+.stat-card .change.down{color:#ff6b6b}
+
+.card{background:var(--s2);border:1px solid var(--bd);border-radius:var(--r);overflow:hidden}
+.card .card-header{padding:14px 20px;border-bottom:1px solid var(--bd);display:flex;align-items:center;gap:12px}
+.card .card-header h3{font-size:14px;font-weight:600}
+.card .card-body{padding:20px}
+.card .card-footer{padding:12px 20px;border-top:1px solid var(--bd);background:var(--s1)}
+
+table{width:100%;border-collapse:collapse}
+table th,table td{padding:12px 16px;text-align:left;font-size:13px;border-bottom:1px solid var(--bd)}
+table th{color:var(--td);font-weight:500;background:var(--s1)}
+table tr:hover td{background:var(--s3)}
+
+.badge{display:inline-block;padding:2px 8px;border-radius:4px;font-size:11px}
+.badge.admin{background:#7c5cff22;color:var(--ac)}
+.badge.premium{background:#ff6b9d22;color:var(--pk)}
+.badge.user{background:#00d4aa22;color:var(--gn)}
+.badge.guest{background:#55557022;color:var(--td)}
+
+.btn{padding:6px 14px;border-radius:6px;font-size:13px;font-weight:500;transition:.2s}
+.btn.primary{background:var(--ac);color:#fff}
+.btn.primary:hover{background:#6a4ae0}
+.btn.secondary{background:var(--s1);border:1px solid var(--bd);color:var(--td)}
+.btn.secondary:hover{border-color:var(--ac);color:var(--t)}
+.btn.danger{background:#ff6b6b22;color:#ff6b6b}
+.btn.danger:hover{background:#ff6b6b;color:#fff}
+
+.actions{display:flex;gap:8px;flex-wrap:wrap}
+.actions .btn{padding:4px 10px;font-size:12px}
+
+.filter-bar{display:flex;gap:12px;margin-bottom:16px;flex-wrap:wrap;align-items:center}
+.filter-bar select,.filter-bar input{padding:8px 12px;background:var(--s1);border:1px solid var(--bd);border-radius:6px;color:var(--t);font-size:13px;outline:none}
+.filter-bar select:focus,.filter-bar input:focus{border-color:var(--ac)}
+.filter-bar label{font-size:13px;color:var(--td)}
+
+.modal-overlay{display:none;position:fixed;inset:0;background:#000a;z-index:100;align-items:center;justify-content:center}
+.modal-overlay.on{display:flex}
+.modal{background:var(--s2);border:1px solid var(--bd);border-radius:var(--r);padding:24px;width:90%;max-width:500px;max-height:85vh;overflow-y:auto}
+.modal h3{font-size:16px;margin-bottom:16px;display:flex;align-items:center;gap:8px}
+.modal .close{margin-left:auto;font-size:18px;color:var(--td);padding:2px 6px}
+.modal .close:hover{color:var(--t)}
+.form-group{margin-bottom:16px}
+.form-group label{display:block;font-size:12px;color:var(--td);margin-bottom:4px}
+.form-group input,.form-group select{width:100%;padding:8px 12px;border-radius:8px;background:var(--s1);border:1px solid var(--bd);color:var(--t);font-size:13px;outline:none}
+.form-group input:focus,.form-group select:focus{border-color:var(--ac)}
+.form-actions{display:flex;gap:12px;justify-content:flex-end;margin-top:20px}
+
+.chart{height:200px;display:flex;align-items:end;gap:8px;padding:20px 0}
+.chart .bar{flex:1;background:var(--ac);border-radius:4px 4px 0 0;position:relative;transition:.3s}
+.chart .bar:hover{opacity:.8}
+.chart .bar .label{position:absolute;bottom:-24px;left:50%;transform:translateX(-50%);font-size:11px;color:var(--td);white-space:nowrap}
+
+.empty{text-align:center;color:var(--tm);padding:60px 16px;font-size:14px}
+.empty span{font-size:40px;display:block;margin-bottom:10px}
+
+.pagination{display:flex;gap:8px;justify-content:center;margin-top:16px}
+.pagination button{padding:6px 12px;background:var(--s1);border:1px solid var(--bd);border-radius:6px;color:var(--td);font-size:13px}
+.pagination button:hover{border-color:var(--ac)}
+.pagination button.on{background:var(--ac);color:#fff;border-color:var(--ac)}
+
+.toast{position:fixed;bottom:20px;left:50%;transform:translateX(-50%);padding:12px 24px;background:var(--s2);border:1px solid var(--bd);border-radius:8px;color:var(--t);font-size:14px;z-index:200;animation:fadeIn .3s ease}
+.toast.success{border-color:var(--gn);background:#00d4aa11}
+.toast.error{border-color:#ff6b6b;background:#ff6b6b11}
+@keyframes fadeIn{from{opacity:0;transform:translateX(-50%) translateY(10px)}to{opacity:1;transform:translateX(-50%) translateY(0)}}
+
+.login-box{max-width:400px;margin:100px auto;padding:40px;background:var(--s2);border:1px solid var(--bd);border-radius:var(--r)}
+.login-box h1{font-size:24px;font-weight:800;background:linear-gradient(135deg,var(--ac),var(--pk));-webkit-background-clip:text;-webkit-text-fill-color:transparent;margin-bottom:8px;text-align:center}
+.login-box p{font-size:13px;color:var(--td);margin-bottom:24px;text-align:center}
+
+@media(max-width:900px){
+  .sidebar{width:60px}
+  .sidebar .logo p,.sidebar .nav button span,.sidebar .user-info{display:none}
+  .main{margin-left:60px}
+  .stats{grid-template-columns:repeat(2,1fr)}
+}
+@media(max-width:600px){
+  .stats{grid-template-columns:1fr}
+}
+</style>
+</head>
+<body>
+
+<div id="loginPage" class="login-box">
+  <h1>💘 恋爱军师</h1>
+  <p>管理后台</p>
+  <div class="form-group">
+    <label>邮箱</label>
+    <input id="adminEmail" type="email" placeholder="请输入管理员邮箱">
+  </div>
+  <div class="form-group">
+    <label>密码</label>
+    <input id="adminPassword" type="password" placeholder="请输入密码" onkeydown="if(event.key==='Enter')doAdminLogin()">
+  </div>
+  <button class="btn primary" style="width:100%" onclick="doAdminLogin()">登录</button>
+</div>
+
+<div id="adminPage" style="display:none">
+<div class="sidebar">
+  <div class="logo">
+    <h1>💘 恋爱军师</h1>
+    <p>管理后台</p>
+  </div>
+  <div class="nav">
+    <button class="on" onclick="switchPage('dashboard')"><span class="icon">📊</span><span>数据概览</span></button>
+    <button onclick="switchPage('users')"><span class="icon">👥</span><span>用户管理</span></button>
+    <button onclick="switchPage('conversations')"><span class="icon">💬</span><span>对话记录</span></button>
+    <button onclick="switchPage('personalities')"><span class="icon">🎭</span><span>人格管理</span></button>
+    <button onclick="switchPage('settings')"><span class="icon">⚙️</span><span>系统设置</span></button>
+  </div>
+  <div class="user-info">
+    <p id="adminName">管理员</p>
+    <span class="role">管理员</span>
+    <button onclick="doAdminLogout()">退出登录</button>
+  </div>
+</div>
+
+<div class="main">
+<div class="header">
+  <h2 id="pageTitle">数据概览</h2>
+  <button class="refresh" onclick="refreshCurrentPage()">🔄 刷新</button>
+</div>
+
+<div class="content">
+
+<div id="page-dashboard" class="page on">
+  <div class="stats">
+    <div class="stat-card">
+      <div class="num" id="stat-users">--</div>
+      <div class="label">总用户数</div>
+    </div>
+    <div class="stat-card">
+      <div class="num" id="stat-conversations">--</div>
+      <div class="label">总会话数</div>
+    </div>
+    <div class="stat-card">
+      <div class="num" id="stat-messages">--</div>
+      <div class="label">总消息数</div>
+    </div>
+    <div class="stat-card">
+      <div class="num" id="stat-today">--</div>
+      <div class="label">今日消息</div>
+    </div>
+  </div>
+
+  <div class="stats" style="grid-template-columns:repeat(2,1fr)">
+    <div class="card">
+      <div class="card-header"><h3>📈 消息趋势（近7天）</h3></div>
+      <div class="card-body">
+        <div class="chart" id="msgChart"></div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-header"><h3>👥 用户角色分布</h3></div>
+      <div class="card-body">
+        <div class="chart" id="roleChart"></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-header"><h3>🌐 匹配服务状态</h3></div>
+    <div class="card-body">
+      <div class="stats" style="grid-template-columns:repeat(3,1fr);margin:0">
+        <div class="stat-card" style="border:none;padding:0;background:transparent">
+          <div class="num" id="match-pool">--</div>
+          <div class="label">匹配池中</div>
+        </div>
+        <div class="stat-card" style="border:none;padding:0;background:transparent">
+          <div class="num" id="match-active">--</div>
+          <div class="label">活跃匹配</div>
+        </div>
+        <div class="stat-card" style="border:none;padding:0;background:transparent">
+          <div class="num" id="match-online">--</div>
+          <div class="label">在线用户</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div id="page-users" class="page">
+  <div class="filter-bar">
+    <input id="userSearch" type="text" placeholder="搜索邮箱或昵称...">
+    <select id="userRoleFilter">
+      <option value="">全部角色</option>
+      <option value="admin">管理员</option>
+      <option value="premium">高级用户</option>
+      <option value="user">普通用户</option>
+      <option value="guest">游客</option>
+    </select>
+    <button class="btn primary" onclick="loadUsers()">搜索</button>
+  </div>
+
+  <div class="card">
+    <table>
+      <thead>
+        <tr>
+          <th>用户</th>
+          <th>邮箱</th>
+          <th>角色</th>
+          <th>配额</th>
+          <th>注册时间</th>
+          <th>最后登录</th>
+          <th>操作</th>
+        </tr>
+      </thead>
+      <tbody id="usersTable">
+        <tr><td colspan="7" class="empty"><span>📋</span>暂无数据</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="pagination" id="usersPagination"></div>
+</div>
+
+<div id="page-conversations" class="page">
+  <div class="filter-bar">
+    <input id="convSearch" type="text" placeholder="搜索用户ID...">
+    <select id="convEngineFilter">
+      <option value="">全部引擎</option>
+      <option value="local">本地规则</option>
+      <option value="ai">AI 大模型</option>
+      <option value="remote">远程匹配</option>
+    </select>
+    <button class="btn primary" onclick="loadConversations()">搜索</button>
+  </div>
+
+  <div class="card">
+    <table>
+      <thead>
+        <tr>
+          <th>会话ID</th>
+          <th>用户</th>
+          <th>人设</th>
+          <th>关系阶段</th>
+          <th>引擎</th>
+          <th>创建时间</th>
+          <th>操作</th>
+        </tr>
+      </thead>
+      <tbody id="convTable">
+        <tr><td colspan="7" class="empty"><span>💬</span>暂无数据</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="pagination" id="convPagination"></div>
+</div>
+
+<div id="page-personalities" class="page">
+  <div class="filter-bar">
+    <label>
+      <input type="checkbox" id="showCustom" onchange="loadPersonalities()"> 显示自定义人格
+    </label>
+    <button class="btn primary" style="margin-left:auto" onclick="openPersonaModal()">➕ 添加人格</button>
+  </div>
+
+  <div class="card">
+    <table>
+      <thead>
+        <tr>
+          <th>表情</th>
+          <th>名称</th>
+          <th>描述</th>
+          <th>类型</th>
+          <th>创建者</th>
+          <th>创建时间</th>
+          <th>操作</th>
+        </tr>
+      </thead>
+      <tbody id="personalityTable">
+        <tr><td colspan="7" class="empty"><span>🎭</span>暂无数据</td></tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<div id="page-settings" class="page">
+  <div class="card" style="margin-bottom:20px">
+    <div class="card-header"><h3>⚙️ 系统配置</h3></div>
+    <div class="card-body">
+      <div class="form-group">
+        <label>默认每日配额（免费用户）</label>
+        <input type="number" id="cfg-quota-free" value="50">
+      </div>
+      <div class="form-group">
+        <label>默认每日配额（高级用户）</label>
+        <input type="number" id="cfg-quota-premium" value="500">
+      </div>
+      <div class="form-group">
+        <label>默认每日配额（管理员）</label>
+        <input type="number" id="cfg-quota-admin" value="99999">
+      </div>
+      <button class="btn primary" onclick="saveSystemSettings()">保存设置</button>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-header"><h3>🔧 系统操作</h3></div>
+    <div class="card-body">
+      <div class="actions" style="gap:16px">
+        <button class="btn secondary" onclick="exportData()">📤 导出数据</button>
+        <button class="btn danger" onclick="clearCache()">🗑️ 清除缓存</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+</div>
+</div>
+</div>
+
+<div class="modal-overlay" id="editUserModal">
+<div class="modal">
+  <h3>编辑用户 <button class="close" onclick="closeEditUserModal()">✕</button></h3>
+  <input type="hidden" id="editUserId">
+  <div class="form-group">
+    <label>昵称</label>
+    <input id="editUserName" placeholder="用户昵称">
+  </div>
+  <div class="form-group">
+    <label>角色</label>
+    <select id="editUserRole">
+      <option value="user">普通用户</option>
+      <option value="premium">高级用户</option>
+      <option value="admin">管理员</option>
+    </select>
+  </div>
+  <div class="form-group">
+    <label>每日配额上限</label>
+    <input type="number" id="editUserQuota" value="50">
+  </div>
+  <div class="form-group">
+    <label>重置配额</label>
+    <select id="resetQuota">
+      <option value="false">否</option>
+      <option value="true">是（清零今日使用）</option>
+    </select>
+  </div>
+  <div class="form-actions">
+    <button class="btn secondary" onclick="closeEditUserModal()">取消</button>
+    <button class="btn primary" onclick="saveUser()">保存</button>
+  </div>
+</div>
+</div>
+
+<div class="modal-overlay" id="personaModal">
+<div class="modal">
+  <h3>添加人格 <button class="close" onclick="closePersonaModal()">✕</button></h3>
+  <div class="form-group">
+    <label>人格名称</label>
+    <input id="newPersonaName" placeholder="例如：温柔体贴">
+  </div>
+  <div class="form-group">
+    <label>表情符号</label>
+    <input id="newPersonaEmoji" placeholder="例如：🌸">
+  </div>
+  <div class="form-group">
+    <label>人格描述</label>
+    <input id="newPersonaDesc" placeholder="一句话描述这个人格的特点">
+  </div>
+  <div class="form-actions">
+    <button class="btn secondary" onclick="closePersonaModal()">取消</button>
+    <button class="btn primary" onclick="createPersona()">创建</button>
+  </div>
+</div>
+</div>
+
+</div>
+
+<script>
+const API_BASE = '/api';
+let token = null;
+let currentUser = null;
+let currentPage = 'dashboard';
+let usersPage = 1;
+let convPage = 1;
+
+function loadAuth() {
+  const savedToken = localStorage.getItem('adminToken');
+  const savedUser = localStorage.getItem('adminUser');
+  
+  if (savedToken && savedUser) {
+    token = savedToken;
+    try {
+      currentUser = JSON.parse(savedUser);
+      return true;
+    } catch (e) {
+      return false;
+    }
+  }
+  return false;
+}
+
+function saveAuth(t, user) {
+  token = t;
+  currentUser = user;
+  localStorage.setItem('adminToken', t);
+  localStorage.setItem('adminUser', JSON.stringify(user));
+}
+
+function clearAuth() {
+  token = null;
+  currentUser = null;
+  localStorage.removeItem('adminToken');
+  localStorage.removeItem('adminUser');
+}
+
+async function api(endpoint, options = {}) {
+  const url = API_BASE + endpoint;
+  const headers = {
+    'Content-Type': 'application/json',
+    ...(options.headers || {})
+  };
+  
+  if (token) {
+    headers['Authorization'] = `Bearer ${token}`;
+  }
+  
+  const response = await fetch(url, {
+    method: options.method || 'GET',
+    headers,
+    body: options.body ? JSON.stringify(options.body) : undefined
+  });
+  
+  const data = await response.json();
+  
+  if (!response.ok) {
+    if (response.status === 401) {
+      clearAuth();
+      showLoginPage();
+      throw new Error('登录已过期');
+    }
+    throw new Error(data.error || 'API 请求失败');
+  }
+  
+  return data;
+}
+
+function showToast(message, type = 'success') {
+  const toast = document.createElement('div');
+  toast.className = `toast ${type}`;
+  toast.textContent = message;
+  document.body.appendChild(toast);
+  setTimeout(() => toast.remove(), 3000);
+}
+
+function showLoginPage() {
+  document.getElementById('loginPage').style.display = 'block';
+  document.getElementById('adminPage').style.display = 'none';
+}
+
+function showAdminPage() {
+  document.getElementById('loginPage').style.display = 'none';
+  document.getElementById('adminPage').style.display = 'block';
+  document.getElementById('adminName').textContent = currentUser?.nickname || currentUser?.email || '管理员';
+  loadDashboard();
+}
+
+async function doAdminLogin() {
+  const email = document.getElementById('adminEmail').value.trim();
+  const password = document.getElementById('adminPassword').value;
+  
+  if (!email || !password) {
+    showToast('请填写邮箱和密码', 'error');
+    return;
+  }
+  
+  try {
+    const data = await api('/auth/login', {
+      method: 'POST',
+      body: { email, password }
+    });
+    
+    if (data.user.role !== 'admin') {
+      showToast('非管理员账号', 'error');
+      return;
+    }
+    
+    saveAuth(data.token, data.user);
+    showAdminPage();
+    showToast('登录成功');
+  } catch (e) {
+    showToast(e.message, 'error');
+  }
+}
+
+function doAdminLogout() {
+  clearAuth();
+  showLoginPage();
+  showToast('已退出登录');
+}
+
+function switchPage(page) {
+  currentPage = page;
+  
+  document.querySelectorAll('.nav button').forEach(b => {
+    b.classList.toggle('on', b.textContent.includes(getPageName(page)));
+  });
+  
+  const titles = {
+    dashboard: '数据概览',
+    users: '用户管理',
+    conversations: '对话记录',
+    personalities: '人格管理',
+    settings: '系统设置'
+  };
+  document.getElementById('pageTitle').textContent = titles[page] || '管理后台';
+  
+  document.querySelectorAll('.content .page').forEach(p => p.classList.remove('on'));
+  document.getElementById('page-' + page).classList.add('on');
+  
+  refreshCurrentPage();
+}
+
+function getPageName(page) {
+  const names = {
+    dashboard: '数据概览',
+    users: '用户管理',
+    conversations: '对话记录',
+    personalities: '人格管理',
+    settings: '系统设置'
+  };
+  return names[page] || '';
+}
+
+function refreshCurrentPage() {
+  switch (currentPage) {
+    case 'dashboard': loadDashboard(); break;
+    case 'users': loadUsers(); break;
+    case 'conversations': loadConversations(); break;
+    case 'personalities': loadPersonalities(); break;
+  }
+}
+
+async function loadDashboard() {
+  try {
+    const [dashboard, msgStats, userStats] = await Promise.all([
+      api('/admin/dashboard'),
+      api('/admin/stats/messages?days=7'),
+      api('/admin/stats/users?days=7')
+    ]);
+    
+    document.getElementById('stat-users').textContent = dashboard.totalUsers;
+    document.getElementById('stat-conversations').textContent = dashboard.totalConversations;
+    document.getElementById('stat-messages').textContent = dashboard.totalMessages;
+    document.getElementById('stat-today').textContent = dashboard.todayMessages;
+    
+    document.getElementById('match-pool').textContent = dashboard.matchingStats.matchingPool;
+    document.getElementById('match-active').textContent = dashboard.matchingStats.activeMatches;
+    document.getElementById('match-online').textContent = dashboard.matchingStats.connectedUsers;
+    
+    renderChart('msgChart', msgStats, 'date', 'count');
+    renderChart('roleChart', userStats.byRole, 'role', 'count');
+    
+  } catch (e) {
+    console.error('加载仪表盘失败:', e);
+    showToast(e.message, 'error');
+  }
+}
+
+function renderChart(containerId, data, xKey, yKey) {
+  const container = document.getElementById(containerId);
+  if (!data || data.length === 0) {
+    container.innerHTML = '<div class="empty" style="padding:20px"><span>📊</span>暂无数据</div>';
+    return;
+  }
+  
+  const maxVal = Math.max(...data.map(d => d[yKey]));
+  const bars = data.map(d => {
+    const height = maxVal > 0 ? (d[yKey] / maxVal) * 150 : 0;
+    const label = xKey === 'date' ? d[xKey].slice(5) : (d[xKey] || '未知');
+    return `<div class="bar" style="height:${height}px" title="${d[xKey]}: ${d[yKey]}"><div class="label">${label}</div></div>`;
+  });
+  
+  container.innerHTML = bars.join('');
+}
+
+async function loadUsers() {
+  try {
+    const users = await api(`/admin/users?limit=50&offset=${(usersPage - 1) * 50}`);
+    
+    const tbody = document.getElementById('usersTable');
+    
+    if (users.length === 0) {
+      tbody.innerHTML = '<tr><td colspan="7" class="empty"><span>📋</span>暂无数据</td></tr>';
+      return;
+    }
+    
+    const roleBadge = (role) => {
+      const classes = { admin: 'badge admin', premium: 'badge premium', user: 'badge user', guest: 'badge guest' };
+      const names = { admin: '管理员', premium: '高级用户', user: '普通用户', guest: '游客' };
+      return `<span class="${classes[role] || 'badge user'}">${names[role] || role}</span>`;
+    };
+    
+    tbody.innerHTML = users.map(u => `
+      <tr>
+        <td>
+          <div style="display:flex;align-items:center;gap:8px">
+            <div style="width:28px;height:28px;border-radius:50%;background:var(--ac);display:flex;align-items:center;justify-content:center;font-weight:600;font-size:12px">
+              ${(u.nickname || u.email || 'U')[0].toUpperCase()}
+            </div>
+            ${u.nickname || u.email?.split('@')[0] || '未知'}
+          </div>
+        </td>
+        <td>${u.email || '-'}</td>
+        <td>${roleBadge(u.role)}</td>
+        <td>${u.quota?.used || 0}/${u.quota?.limit || 0}</td>
+        <td>${u.createdAt?.slice(0, 10) || '-'}</td>
+        <td>${u.lastLogin ? u.lastLogin.slice(0, 16) : '-'}</td>
+        <td>
+          <div class="actions">
+            <button class="btn secondary" onclick="openEditUserModal('${u.id}')">编辑</button>
+          </div>
+        </td>
+      </tr>
+    `).join('');
+    
+  } catch (e) {
+    console.error('加载用户列表失败:', e);
+    showToast(e.message, 'error');
+  }
+}
+
+function openEditUserModal(userId) {
+  document.getElementById('editUserId').value = userId;
+  document.getElementById('editUserModal').classList.add('on');
+}
+
+function closeEditUserModal() {
+  document.getElementById('editUserModal').classList.remove('on');
+}
+
+async function saveUser() {
+  const userId = document.getElementById('editUserId').value;
+  const role = document.getElementById('editUserRole').value;
+  const resetQuota = document.getElementById('resetQuota').value === 'true';
+  
+  try {
+    await api(`/admin/users/${userId}/role`, {
+      method: 'PUT',
+      body: { role }
+    });
+    
+    if (resetQuota) {
+      await api(`/admin/users/${userId}/quota`, {
+        method: 'PUT',
+        body: { reset: true }
+      });
+    }
+    
+    closeEditUserModal();
+    loadUsers();
+    showToast('用户更新成功');
+  } catch (e) {
+    showToast(e.message, 'error');
+  }
+}
+
+async function loadConversations() {
+  try {
+    const conversations = await api(`/admin/conversations?limit=50&offset=${(convPage - 1) * 50}`);
+    
+    const tbody = document.getElementById('convTable');
+    
+    if (conversations.length === 0) {
+      tbody.innerHTML = '<tr><td colspan="7" class="empty"><span>💬</span>暂无数据</td></tr>';
+      return;
+    }
+    
+    const stageMap = {
+      crush: '暗恋中', strangers: '刚认识', pursue: '追求中',
+      flirting: '暧昧期', dating_early: '约会初期', dating: '热恋期',
+      stable: '稳定期', longterm: '老夫老妻', conflict: '冷战期',
+      crisis: '危机期', married: '已婚', breakup: '分手后'
+    };
+    
+    const engineBadge = (type) => {
+      const badges = {
+        local: '<span class="badge user">🏠 本地</span>',
+        ai: '<span class="badge premium">🤖 AI</span>',
+        remote: '<span class="badge admin">🌐 远程</span>'
+      };
+      return badges[type] || type;
+    };
+    
+    tbody.innerHTML = conversations.map(c => `
+      <tr>
+        <td><code style="font-size:11px;color:var(--ac)">${c.id.slice(0, 12)}...</code></td>
+        <td>${c.userNickname || c.userEmail?.slice(0, 10) || '未知'}</td>
+        <td>${c.myPersonality} → ${c.taPersonality}</td>
+        <td>${stageMap[c.stage] || c.stage}</td>
+        <td>${engineBadge(c.engineType)}</td>
+        <td>${c.createdAt?.slice(0, 16) || '-'}</td>
+        <td>-</td>
+      </tr>
+    `).join('');
+    
+  } catch (e) {
+    console.error('加载会话列表失败:', e);
+    showToast(e.message, 'error');
+  }
+}
+
+async function loadPersonalities() {
+  try {
+    const showCustom = document.getElementById('showCustom').checked;
+    const personalities = await api(`/admin/personalities?includeCustom=${showCustom}`);
+    
+    const tbody = document.getElementById('personalityTable');
+    
+    if (personalities.length === 0) {
+      tbody.innerHTML = '<tr><td colspan="7" class="empty"><span>🎭</span>暂无数据</td></tr>';
+      return;
+    }
+    
+    tbody.innerHTML = personalities.map(p => `
+      <tr>
+        <td><span style="font-size:20px">${p.emoji}</span></td>
+        <td><strong>${p.name}</strong></td>
+        <td>${p.description || '-'}</td>
+        <td>${p.isCustom ? '<span class="badge premium">自定义</span>' : '<span class="badge user">系统</span>'}</td>
+        <td>${p.createdBy || '-'}</td>
+        <td>${p.createdAt?.slice(0, 10) || '-'}</td>
+        <td>
+          ${p.isCustom ? `
+            <div class="actions">
+              <button class="btn danger" onclick="deletePersona('${p.key}')">删除</button>
+            </div>
+          ` : '-'}
+        </td>
+      </tr>
+    `).join('');
+    
+  } catch (e) {
+    console.error('加载人格列表失败:', e);
+    showToast(e.message, 'error');
+  }
+}
+
+function openPersonaModal() {
+  document.getElementById('personaModal').classList.add('on');
+}
+
+function closePersonaModal() {
+  document.getElementById('personaModal').classList.remove('on');
+}
+
+async function createPersona() {
+  const name = document.getElementById('newPersonaName').value.trim();
+  if (!name) {
+    showToast('请填写人格名称', 'error');
+    return;
+  }
+  
+  try {
+    await api('/engine/personalities', {
+      method: 'POST',
+      body: {
+        name,
+        emoji: document.getElementById('newPersonaEmoji').value.trim() || '🎭',
+        description: document.getElementById('newPersonaDesc').value.trim()
+      }
+    });
+    
+    closePersonaModal();
+    loadPersonalities();
+    showToast('人格创建成功');
+  } catch (e) {
+    showToast(e.message, 'error');
+  }
+}
+
+async function deletePersona(key) {
+  if (!confirm('确定要删除这个人格吗？')) return;
+  
+  try {
+    await api(`/admin/personalities/${key}`, { method: 'DELETE' });
+    loadPersonalities();
+    showToast('人格已删除');
+  } catch (e) {
+    showToast(e.message, 'error');
+  }
+}
+
+function saveSystemSettings() {
+  showToast('设置已保存');
+}
+
+function exportData() {
+  showToast('数据导出功能开发中');
+}
+
+function clearCache() {
+  if (confirm('确定要清除缓存吗？')) {
+    showToast('缓存已清除');
+  }
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+  if (loadAuth()) {
+    showAdminPage();
+  } else {
+    showLoginPage();
+  }
+});
+</script>
+</body>
+</html>

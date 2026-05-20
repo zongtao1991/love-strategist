@@ -1,0 +1,1178 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta name="format-detection" content="telephone=no">
+<title>恋爱军师</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+:root{--bg:#0b0b12;--s1:#12121e;--s2:#1a1a2e;--s3:#222240;--bd:#2a2a4a;--t:#e8e8f0;--td:#8888aa;--tm:#555570;--ac:#7c5cff;--pk:#ff6b9d;--gn:#00d4aa;--r:12px;--safe-top:env(safe-area-inset-top,0px);--safe-bottom:env(safe-area-inset-bottom,0px)}
+body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;background:var(--bg);color:var(--t);min-height:100vh;max-width:100vw;overflow-x:hidden}
+button{cursor:pointer;border:none;font-family:inherit;font-size:inherit;background:none;color:inherit;-webkit-tap-highlight-color:transparent}
+input,textarea,select{font-family:inherit;-webkit-appearance:none}
+::-webkit-scrollbar{width:4px;height:4px}::-webkit-scrollbar-thumb{background:var(--bd);border-radius:3px}
+
+.page{display:none;min-height:100vh;padding-bottom:var(--safe-bottom)}.page.on{display:flex;flex-direction:column}
+.center{display:flex;flex-direction:column;align-items:center;max-width:900px;margin:0 auto;width:100%;padding:20px 16px;padding-top:calc(20px + var(--safe-top));gap:16px;flex:1}
+
+.logo{font-size:28px;font-weight:800;background:linear-gradient(135deg,var(--ac),var(--pk));-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+.sub{color:var(--td);font-size:13px;margin-top:-4px;text-align:center}
+
+.engine-bar{width:100%;display:flex;justify-content:center;align-items:center;gap:12px;flex-wrap:wrap}
+.engine-bar .lbl{margin-bottom:0;margin-right:4px;white-space:nowrap;color:var(--td);font-size:13px}
+.engine-bar .etog{display:flex;gap:6px;flex-wrap:wrap}
+.engine-bar .etog button{padding:6px 14px;border-radius:8px;background:var(--s1);border:1px solid var(--bd);color:var(--td);font-size:13px;transition:.2s}
+.engine-bar .etog button:hover{border-color:var(--gn)}
+.engine-bar .etog button.on{background:var(--gn);color:#fff;border-color:var(--gn)}
+.engine-bar .etog button.soon{opacity:.5}
+
+.stage-wrap{width:100%}
+.stage-wrap .lbl{font-size:12px;color:var(--td);margin-bottom:6px}
+.stagerow{display:flex;gap:6px;flex-wrap:wrap}
+.stagerow button{padding:5px 10px;border-radius:14px;background:var(--s2);border:1px solid var(--bd);color:var(--td);font-size:12px;transition:.2s}
+.stagerow button:hover{border-color:var(--pk)}
+.stagerow button.on{background:var(--pk);color:#fff;border-color:var(--pk)}
+.stagerow button[data-v="crush"]{border-left:3px solid #ffcc00}
+.stagerow button[data-v="pursue"]{border-left:3px solid #ff9933}
+.stagerow button[data-v="flirting"]{border-left:3px solid #ff66b2}
+.stagerow button[data-v="dating_early"]{border-left:3px solid #ff6699}
+.stagerow button[data-v="dating"]{border-left:3px solid #ff3366}
+.stagerow button[data-v="stable"]{border-left:3px solid #99ccff}
+.stagerow button[data-v="longterm"]{border-left:3px solid #6699cc}
+.stagerow button[data-v="conflict"]{border-left:3px solid #9999cc}
+.stagerow button[data-v="crisis"]{border-left:3px solid #cc6666}
+.stagerow button[data-v="married"]{border-left:3px solid #ffcc99}
+.stagerow button[data-v="breakup"]{border-left:3px solid #666699}
+
+.cards-wrap{width:100%;display:flex;gap:16px;flex-direction:column}
+.cards-row{display:flex;gap:16px;flex-direction:column}
+.card{background:var(--s2);border:1px solid var(--bd);border-radius:var(--r);padding:16px;display:flex;flex-direction:column;gap:12px;flex:1}
+.card h3{font-size:14px;display:flex;align-items:center;gap:6px;font-weight:600}
+.card h3 .badge{font-size:10px;background:var(--ac);color:#fff;padding:2px 6px;border-radius:4px;font-weight:normal}
+.lbl{font-size:12px;color:var(--td);margin-bottom:4px}
+
+.tog{display:flex;gap:6px;flex-wrap:wrap}
+.tog button{flex:1;min-width:0;padding:8px 10px;border-radius:8px;background:var(--s1);border:1px solid var(--bd);color:var(--td);font-size:13px;transition:.2s;text-align:center;white-space:nowrap}
+.tog button:hover{border-color:var(--ac);color:var(--t)}
+.tog button.on{background:var(--ac);color:#fff;border-color:var(--ac)}
+.tog button:disabled{opacity:.5}
+
+.p-section{margin-top:4px}
+.p-tabs{display:flex;gap:4px;margin-bottom:8px;overflow-x:auto;-webkit-overflow-scrolling:touch;padding-bottom:2px}
+.p-tabs button{padding:5px 10px;border-radius:6px;background:var(--s1);border:1px solid var(--bd);color:var(--td);font-size:12px;white-space:nowrap;flex-shrink:0}
+.p-tabs button:hover{border-color:var(--ac)}
+.p-tabs button.on{background:var(--pk);color:#fff;border-color:var(--pk)}
+.pgrid{display:grid;grid-template-columns:repeat(3,1fr);gap:6px}
+.pgrid button{padding:8px 6px;border-radius:8px;background:var(--s1);border:1px solid var(--bd);color:var(--td);text-align:center;font-size:11px;transition:.2s;line-height:1.3;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;min-height:50px}
+.pgrid button:hover{border-color:var(--ac);color:var(--t)}
+.pgrid button.on{background:var(--ac);color:#fff;border-color:var(--ac)}
+.pgrid button .pn{font-weight:600;display:flex;align-items:center;gap:3px;font-size:11px}
+.pgrid button .pd{display:block;font-size:9px;opacity:.7;margin-top:1px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:100%}
+.pgrid button.custom{border-left:3px solid var(--pk)}
+.pgrid button.custom.on{border-left-color:var(--ac)}
+.pgrid button.add-persona{background:var(--s3);border:1px dashed var(--ac);color:var(--ac);border-style:dashed}
+.pgrid button.add-persona:hover{background:var(--ac);color:#fff}
+.pgrid button.add-persona .pn{font-size:16px}
+.pgrid button.add-persona .pd{font-size:10px}
+
+.actions{display:flex;gap:12px;flex-wrap:wrap;justify-content:center;width:100%}
+.abtn{flex:1;min-width:110px;max-width:160px;padding:12px 20px;border-radius:var(--r);font-size:14px;font-weight:700;transition:.2s;text-align:center}
+.abtn:hover{transform:translateY(-1px);box-shadow:0 4px 12px #0005}
+.b1{background:linear-gradient(135deg,var(--ac),#5a3fd4);color:#fff}
+.b2{background:linear-gradient(135deg,var(--pk),#d4507a);color:#fff}
+
+.modal-overlay{display:none;position:fixed;inset:0;background:#000a;z-index:100;align-items:center;justify-content:center;padding:20px}
+.modal-overlay.on{display:flex}
+.modal{background:var(--s2);border:1px solid var(--bd);border-radius:var(--r);padding:20px;width:100%;max-width:400px;max-height:85vh;overflow-y:auto}
+.modal h3{font-size:16px;margin-bottom:14px;display:flex;align-items:center;gap:8px}
+.modal .close{margin-left:auto;font-size:18px;color:var(--td);padding:2px 6px}
+.modal .close:hover{color:var(--t)}
+.cfg-group{margin-bottom:14px}
+.cfg-group label{display:block;font-size:12px;color:var(--td);margin-bottom:4px}
+.cfg-group input,.cfg-group select,.cfg-group textarea{width:100%;padding:8px 12px;border-radius:8px;background:var(--s1);border:1px solid var(--bd);color:var(--t);font-size:13px;outline:none}
+.cfg-group textarea{min-height:80px;resize:vertical}
+.cfg-section{padding:10px;background:var(--s1);border-radius:8px;margin-bottom:10px}
+.cfg-save{padding:8px 24px;border-radius:8px;background:var(--ac);color:#fff;font-size:14px;font-weight:600;width:100%}
+.cfg-save:hover{background:#6a4ae0}
+.cfg-save:disabled{opacity:.5}
+.cfg-cancel{padding:8px 24px;border-radius:8px;background:var(--s1);border:1px solid var(--bd);color:var(--td);font-size:14px;width:100%}
+.cfg-cancel:hover{color:var(--t);border-color:var(--td)}
+.btn-row{display:flex;gap:10px;margin-top:16px}
+
+.chatwrap{height:100vh;display:flex;flex-direction:column;padding-top:var(--safe-top)}
+.chtop{display:flex;align-items:center;gap:10px;padding:10px 14px;background:var(--s1);border-bottom:1px solid var(--bd);flex-shrink:0;flex-wrap:wrap}
+.chtop .bk{font-size:18px;padding:4px 6px;color:var(--td)}.chtop .bk:hover{color:var(--t)}
+.chtop .title-wrap{flex:1;min-width:0}
+.chtop h4{font-size:14px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.chtop span{font-size:11px;color:var(--td);display:block;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.chtop .engine-badge{padding:3px 6px;border-radius:4px;font-size:10px;font-weight:600;flex-shrink:0}
+.chtop .engine-badge.local{background:#00d4aa22;color:var(--gn)}
+.chtop .engine-badge.ai{background:#7c5cff22;color:var(--ac)}
+.chtop .engine-badge.remote{background:#ff6b9d22;color:var(--pk)}
+.chtop .right-actions{display:flex;gap:6px;margin-left:auto}
+.chtop .right-actions button{padding:5px 8px;border-radius:6px;background:var(--s2);border:1px solid var(--bd);color:var(--td);font-size:12px;white-space:nowrap}
+.chtop .right-actions button:hover{color:var(--t)}
+
+.chbody{display:flex;flex:1;overflow:hidden}
+.msgs{flex:1;overflow-y:auto;padding:12px;display:flex;flex-direction:column;gap:8px;-webkit-overflow-scrolling:touch}
+.mrow{display:flex;gap:6px;max-width:80%}
+.mrow.me{align-self:flex-end;flex-direction:row-reverse}
+.mrow.ta{align-self:flex-start}
+.mav{width:28px;height:28px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:14px;flex-shrink:0;background:var(--s2)}
+.mbb{padding:8px 12px;border-radius:12px;font-size:14px;line-height:1.5;word-break:break-word}
+.mrow.me .mbb{background:#2a2a5a;border-bottom-right-radius:4px}
+.mrow.ta .mbb{background:#1e3a2e;border-bottom-left-radius:4px}
+
+.sys-msg{align-self:center;padding:4px 10px;background:var(--s1);border-radius:12px;font-size:11px;color:var(--tm);margin:4px 0}
+
+.typing{align-self:flex-start;display:flex;gap:3px;padding:8px 12px;background:#1e3a2e;border-radius:12px;border-bottom-left-radius:4px}
+.typing i{width:4px;height:4px;background:var(--td);border-radius:50%;display:block;animation:tb .6s ease-in-out infinite}
+.typing i:nth-child(2){animation-delay:.15s}.typing i:nth-child(3){animation-delay:.3s}
+@keyframes tb{0%,100%{transform:translateY(0)}50%{transform:translateY(-3px)}}
+
+.advpanel{width:260px;border-left:1px solid var(--bd);background:var(--s1);overflow-y:auto;padding:12px;display:flex;flex-direction:column;gap:8px;flex-shrink:0}
+.advpanel.hidden{display:none}
+.advpanel h4{font-size:12px;color:var(--ac);font-weight:600}
+.advbox{background:var(--s2);border-radius:8px;padding:8px;font-size:12px;line-height:1.4}
+.advbox .al{font-weight:600;color:var(--pk);font-size:11px;margin-bottom:3px}
+.advbox .ac{color:var(--td);white-space:pre-line}
+.slist{display:flex;flex-direction:column;gap:4px;margin-top:4px}
+.slist button{padding:7px 8px;background:var(--s1);border:1px solid var(--bd);border-radius:6px;color:var(--t);font-size:12px;text-align:left;transition:.2s;line-height:1.3}
+.slist button:hover{border-color:var(--ac);background:var(--s3)}
+.wn{color:#ff9966;font-size:11px;margin-top:4px;line-height:1.4;white-space:pre-line}
+
+.chinput{display:flex;gap:8px;padding:10px 14px;background:var(--s1);border-top:1px solid var(--bd);flex-shrink:0;padding-bottom:calc(10px + var(--safe-bottom))}
+.chinput textarea{flex:1;padding:8px 12px;border-radius:16px;background:var(--s2);border:1px solid var(--bd);color:var(--t);font-size:14px;outline:none;resize:none;max-height:70px;line-height:1.4;min-height:36px}
+.chinput textarea:focus{border-color:var(--ac)}
+.chinput .snd{width:34px;height:34px;border-radius:50%;background:var(--ac);color:#fff;font-size:14px;display:flex;align-items:center;justify-content:center;flex-shrink:0;align-self:flex-end}
+
+.simwrap{height:100vh;display:flex;flex-direction:column;padding-top:var(--safe-top)}
+.simtop{display:flex;align-items:center;gap:10px;padding:10px 14px;background:var(--s1);border-bottom:1px solid var(--bd);flex-shrink:0;flex-wrap:wrap}
+.simtop .bk{font-size:18px;padding:4px 6px;color:var(--td)}.simtop .bk:hover{color:var(--t)}
+.simtop h4{font-size:14px}
+.simtop select{padding:5px 8px;border-radius:6px;background:var(--s2);border:1px solid var(--bd);color:var(--t);font-size:12px;outline:none;margin-left:auto;max-width:140px}
+.simtop select option{background:var(--s2)}
+.simtop .gen{padding:6px 12px;border-radius:6px;background:var(--pk);color:#fff;font-size:12px;font-weight:600}
+.simtop .gen:hover{background:#d4507a}
+
+.simbody{flex:1;overflow-y:auto;padding:14px;display:flex;flex-direction:column;gap:12px;max-width:520px;margin:0 auto;width:100%;-webkit-overflow-scrolling:touch}
+.simpair{display:flex;justify-content:center;gap:14px;padding:10px;background:var(--s2);border-radius:var(--r);font-size:12px;color:var(--td);flex-wrap:wrap}
+.simpair .vs{color:var(--pk);font-weight:700;font-size:14px;align-self:center}
+
+.sturn{display:flex;flex-direction:column;gap:4px;animation:fi .35s ease}
+@keyframes fi{from{opacity:0;transform:translateY(4px)}to{opacity:1;transform:translateY(0)}}
+.smsg{display:flex;gap:6px;align-items:flex-start}
+.smsg.r{flex-direction:row-reverse}
+.smsg .sa{width:24px;height:24px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:12px;flex-shrink:0;background:var(--s2)}
+.smsg .sb{padding:7px 10px;border-radius:10px;font-size:13px;line-height:1.4;max-width:75%}
+.smsg.l .sb{background:#2a2a5a;border-bottom-left-radius:4px}
+.smsg.r .sb{background:#1e3a2e;border-bottom-right-radius:4px}
+.scmt{padding:5px 8px;background:var(--s1);border-left:2px solid var(--ac);border-radius:0 6px 6px 0;font-size:11px;color:var(--td);line-height:1.4;margin:0 30px}
+
+.empty{text-align:center;color:var(--tm);padding:40px 16px;font-size:13px;line-height:1.5}
+.empty span{font-size:36px;display:block;margin-bottom:8px}
+
+.login-tabs{display:flex;gap:0;margin-bottom:16px}
+.login-tabs button{flex:1;padding:8px;background:var(--s2);border:1px solid var(--bd);color:var(--td);font-size:13px}
+.login-tabs button:first-child{border-radius:6px 0 0 6px}
+.login-tabs button:last-child{border-radius:0 6px 6px 0}
+.login-tabs button.on{background:var(--ac);color:#fff;border-color:var(--ac)}
+
+.user-bar{display:flex;align-items:center;gap:10px;padding:10px 14px;background:var(--s1);border-bottom:1px solid var(--bd);padding-top:calc(10px + var(--safe-top))}
+.user-bar .user-info{flex:1;display:flex;align-items:center;gap:8px;min-width:0}
+.user-bar .avatar{width:28px;height:28px;border-radius:50%;background:var(--ac);display:flex;align-items:center;justify-content:center;font-weight:600;font-size:13px;flex-shrink:0}
+.user-bar .info-text{min-width:0}
+.user-bar .info-text .name{font-size:12px;font-weight:600;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.user-bar .info-text .quota{font-size:10px;color:var(--td);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.user-bar .logout-btn{padding:4px 8px;border-radius:4px;background:var(--s2);border:1px solid var(--bd);color:var(--td);font-size:11px}
+.user-bar .logout-btn:hover{color:var(--pk);border-color:var(--pk)}
+
+.toast{position:fixed;bottom:calc(20px + var(--safe-bottom));left:50%;transform:translateX(-50%);padding:10px 18px;background:var(--s2);border:1px solid var(--bd);border-radius:8px;color:var(--t);font-size:13px;z-index:200;animation:fadeIn .3s ease;max-width:90%;text-align:center}
+.toast.success{border-color:var(--gn);background:#00d4aa11}
+.toast.error{border-color:#ff6b6b;background:#ff6b6b11}
+@keyframes fadeIn{from{opacity:0;transform:translateX(-50%) translateY(8px)}to{opacity:1;transform:translateX(-50%) translateY(0)}}
+
+@media(min-width:600px){
+  .cards-row{flex-direction:row}
+  .card{min-width:280px}
+  .pgrid{grid-template-columns:repeat(3,1fr)}
+}
+
+@media(min-width:900px){
+  .center{padding:30px 20px;gap:20px}
+  .logo{font-size:32px}
+  .cards-wrap{gap:20px}
+  .card{padding:18px;gap:14px}
+  .advpanel{display:flex!important}
+}
+
+@media(max-width:400px){
+  .pgrid{grid-template-columns:repeat(2,1fr)}
+  .tog button{font-size:12px;padding:6px 8px}
+  .abtn{min-width:90px;padding:10px 14px;font-size:13px}
+}
+</style>
+</head>
+<body>
+
+<div id="P0" class="page on">
+<div class="user-bar" id="userBar" style="display:none">
+  <div class="user-info">
+    <div class="avatar" id="userAvatar">U</div>
+    <div class="info-text">
+      <div class="name" id="userName">用户</div>
+      <div class="quota" id="quotaInfo">配额: --</div>
+    </div>
+  </div>
+  <button class="logout-btn" onclick="doLogout()">退出</button>
+</div>
+
+<div class="center">
+  <div class="logo">💘 恋爱军师</div>
+  <div class="sub">设定双方人设，开始你的恋爱攻略</div>
+
+  <div class="engine-bar">
+    <div class="lbl">🔌 策略引擎</div>
+    <div class="etog" id="etog">
+      <button class="on" data-v="local">🏠 常规</button>
+      <button data-v="ai" class="soon">🤖 高阶</button>
+      <button data-v="remote" class="soon">🌐 远程</button>
+    </div>
+  </div>
+
+  <div class="stage-wrap">
+    <div class="lbl">💫 关系阶段</div>
+    <div class="stagerow" id="sr"></div>
+  </div>
+
+  <div class="cards-wrap">
+    <div class="cards-row">
+      <div class="card">
+        <h3>🙋 我的人设</h3>
+        <div><div class="lbl">性别</div>
+          <div class="tog" id="mg">
+            <button class="on" data-v="m">👦 男</button>
+            <button data-v="f">👧 女</button>
+            <button data-v="s">🔒 保密</button>
+          </div>
+        </div>
+        <div class="p-section">
+          <div class="lbl">性格</div>
+          <div class="p-tabs" id="mTabs"></div>
+          <div class="pgrid" id="mp"></div>
+        </div>
+      </div>
+      <div class="card">
+        <h3>💕 TA的人设</h3>
+        <div><div class="lbl">性别</div>
+          <div class="tog" id="tg">
+            <button data-v="m">👦 男</button>
+            <button class="on" data-v="f">👧 女</button>
+            <button data-v="s">🔒 保密</button>
+          </div>
+        </div>
+        <div class="p-section">
+          <div class="lbl">性格</div>
+          <div class="p-tabs" id="tTabs"></div>
+          <div class="pgrid" id="tp"></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="actions">
+      <button class="abtn b1" onclick="go('chat')">💬 实战对话</button>
+      <button class="abtn b2" onclick="go('sim')">🎭 模拟对话</button>
+    </div>
+  </div>
+</div>
+</div>
+
+<div class="modal-overlay" id="loginModal">
+<div class="modal">
+  <h3>🔐 登录 / 注册 <button class="close" onclick="closeLogin()">✕</button></h3>
+  <div class="login-tabs">
+    <button class="on" onclick="switchLoginTab('login')">登录</button>
+    <button onclick="switchLoginTab('register')">注册</button>
+  </div>
+  <div id="loginForm">
+    <div class="cfg-group">
+      <label>邮箱</label>
+      <input id="loginEmail" type="email" placeholder="请输入邮箱">
+    </div>
+    <div class="cfg-group">
+      <label>密码</label>
+      <input id="loginPassword" type="password" placeholder="请输入密码">
+    </div>
+  </div>
+  <div id="registerForm" style="display:none">
+    <div class="cfg-group">
+      <label>邮箱</label>
+      <input id="regEmail" type="email" placeholder="请输入邮箱">
+    </div>
+    <div class="cfg-group">
+      <label>昵称</label>
+      <input id="regNickname" placeholder="请输入昵称">
+    </div>
+    <div class="cfg-group">
+      <label>密码</label>
+      <input id="regPassword" type="password" placeholder="请输入密码（至少6位）">
+    </div>
+  </div>
+  <div style="text-align:right;margin-top:14px">
+    <button class="cfg-save" id="loginSubmitBtn" onclick="doLogin()">登录</button>
+  </div>
+  <div style="text-align:center;margin-top:10px">
+    <button style="color:var(--td);font-size:12px" onclick="doGuest()">游客模式体验</button>
+  </div>
+</div>
+</div>
+
+<div class="modal-overlay" id="customPersonaModal">
+<div class="modal">
+  <h3>✏️ 创建自定义人格 <button class="close" onclick="closeCustomPersonaModal()">✕</button></h3>
+  <div class="cfg-group">
+    <label>人格名称</label>
+    <input id="cpName" placeholder="例如：温柔体贴型">
+  </div>
+  <div class="cfg-group">
+    <label>Emoji</label>
+    <input id="cpEmoji" placeholder="例如：🌸" value="🎭">
+  </div>
+  <div class="cfg-group">
+    <label>描述</label>
+    <input id="cpDesc" placeholder="简单描述这个人格">
+  </div>
+  <div class="cfg-group">
+    <label>开场白（每行一个，用换行分隔）</label>
+    <textarea id="cpOpen" placeholder="在忙吗？&#10;今天天气好好呀～&#10;刚看到个可爱的东西想到你了"></textarea>
+  </div>
+  <div class="cfg-section">
+    <div class="lbl">回应模板（JSON格式，可选）</div>
+    <textarea id="cpResponses" placeholder='{"hi": ["你好呀"], "chat": ["今天做了什么"]}'></textarea>
+  </div>
+  <div class="btn-row">
+    <button class="cfg-cancel" onclick="closeCustomPersonaModal()">取消</button>
+    <button class="cfg-save" onclick="saveCustomPersona()">创建</button>
+  </div>
+</div>
+</div>
+
+<div id="P1" class="page">
+<div class="chatwrap">
+  <div class="chtop">
+    <button class="bk" onclick="back()">←</button>
+    <div class="title-wrap"><h4 id="ct"></h4><span id="cs"></span></div>
+    <span class="engine-badge local" id="ebadge">🏠 常规</span>
+    <div class="right-actions">
+      <button onclick="toggleAdv()">🧠 军师</button>
+      <button onclick="clrChat()">🗑️</button>
+    </div>
+  </div>
+  <div class="chbody">
+    <div class="msgs" id="ml"></div>
+    <div class="advpanel hidden" id="ap">
+      <h4>🧠 恋爱军师</h4>
+      <div class="advbox"><div class="al">🔍 局势分析</div><div class="ac" id="aa">开始聊天吧～</div></div>
+      <div class="advbox"><div class="al">💡 推荐回复</div><div class="slist" id="sl"></div></div>
+      <div class="advbox" id="aw" style="display:none"><div class="al">⚠️ 避雷</div><div class="wn" id="wt"></div></div>
+    </div>
+  </div>
+  <div class="chinput">
+    <textarea id="ci" rows="1" placeholder="说点什么…" onkeydown="ck(event)"></textarea>
+    <button class="snd" onclick="send()">➤</button>
+  </div>
+</div>
+</div>
+
+<div id="P2" class="page">
+<div class="simwrap">
+  <div class="simtop">
+    <button class="bk" onclick="back()">←</button>
+    <h4>🎭 模拟对话</h4>
+    <select id="stopic">
+      <option value="first">🤝 初次搭讪</option>
+      <option value="daily">☕ 日常闲聊</option>
+      <option value="flirt">💗 暧昧试探</option>
+      <option value="date">🎬 约会邀请</option>
+      <option value="fight">😤 吵架和好</option>
+      <option value="night">🌙 深夜谈心</option>
+      <option value="confess">💘 表白时刻</option>
+    </select>
+    <button class="gen" onclick="genSim()">✨ 生成</button>
+  </div>
+  <div class="simbody" id="sb">
+    <div class="empty"><span>🎭</span>选择场景，点击「生成」</div>
+  </div>
+</div>
+</div>
+
+<script>
+const API_BASE = '/api';
+
+let S = {
+  mg: 'm', mp: 'gentle',
+  tg: 'f', tp: 'gentle',
+  stage: 'strangers',
+  eng: 'local',
+  hist: [],
+  conversationId: null
+};
+
+let currentUser = null;
+let token = null;
+
+let personalities = [];
+let stages = [];
+let customPersonalities = [];
+let defaultPersonalities = [];
+
+function genderName(g) {
+  if (g === 'm') return '男';
+  if (g === 'f') return '女';
+  return '保密';
+}
+
+function gi(g) {
+  if (g === 'm') return '👦';
+  if (g === 'f') return '👧';
+  return '🔒';
+}
+
+function esc(t) {
+  const d = document.createElement('div');
+  d.textContent = t;
+  return d.innerHTML;
+}
+
+function showToast(message, type = 'success') {
+  const existing = document.querySelector('.toast');
+  if (existing) existing.remove();
+  
+  const toast = document.createElement('div');
+  toast.className = `toast ${type}`;
+  toast.textContent = message;
+  document.body.appendChild(toast);
+  setTimeout(() => toast.remove(), 3000);
+}
+
+async function api(endpoint, options = {}) {
+  const url = API_BASE + endpoint;
+  const headers = {
+    'Content-Type': 'application/json',
+    ...(options.headers || {})
+  };
+  
+  if (token) {
+    headers['Authorization'] = `Bearer ${token}`;
+  }
+  
+  const response = await fetch(url, {
+    method: options.method || 'GET',
+    headers,
+    body: options.body ? JSON.stringify(options.body) : undefined
+  });
+  
+  const data = await response.json();
+  
+  if (!response.ok) {
+    throw new Error(data.error || 'API 请求失败');
+  }
+  
+  return data;
+}
+
+function loadAuth() {
+  const savedToken = localStorage.getItem('loveStratToken');
+  const savedUser = localStorage.getItem('loveStratUser');
+  
+  if (savedToken && savedUser) {
+    token = savedToken;
+    try {
+      currentUser = JSON.parse(savedUser);
+      return true;
+    } catch (e) {
+      return false;
+    }
+  }
+  return false;
+}
+
+function saveAuth(t, user) {
+  token = t;
+  currentUser = user;
+  localStorage.setItem('loveStratToken', t);
+  localStorage.setItem('loveStratUser', JSON.stringify(user));
+}
+
+function clearAuth() {
+  token = null;
+  currentUser = null;
+  localStorage.removeItem('loveStratToken');
+  localStorage.removeItem('loveStratUser');
+}
+
+function updateUserBar() {
+  const bar = document.getElementById('userBar');
+  
+  if (currentUser) {
+    bar.style.display = 'flex';
+    document.getElementById('userAvatar').textContent = (currentUser.nickname || 'U')[0].toUpperCase();
+    document.getElementById('userName').textContent = currentUser.nickname || currentUser.email;
+    
+    loadQuota();
+  } else {
+    bar.style.display = 'none';
+  }
+}
+
+async function loadQuota() {
+  try {
+    const quota = await api('/engine/quota');
+    document.getElementById('quotaInfo').textContent = `配额: ${quota.used}/${quota.limit} (剩余: ${quota.remaining})`;
+  } catch (e) {
+    console.error('加载配额失败:', e);
+  }
+}
+
+function openLogin() {
+  document.getElementById('loginModal').classList.add('on');
+  switchLoginTab('login');
+}
+
+function closeLogin() {
+  document.getElementById('loginModal').classList.remove('on');
+}
+
+function switchLoginTab(tab) {
+  const tabs = document.querySelectorAll('.login-tabs button');
+  tabs.forEach((b, i) => {
+    b.classList.toggle('on', (tab === 'login' && i === 0) || (tab === 'register' && i === 1));
+  });
+  
+  document.getElementById('loginForm').style.display = tab === 'login' ? 'block' : 'none';
+  document.getElementById('registerForm').style.display = tab === 'register' ? 'block' : 'none';
+  document.getElementById('loginSubmitBtn').textContent = tab === 'login' ? '登录' : '注册';
+  document.getElementById('loginSubmitBtn').onclick = tab === 'login' ? doLogin : doRegister;
+}
+
+async function doLogin() {
+  const email = document.getElementById('loginEmail').value.trim();
+  const password = document.getElementById('loginPassword').value;
+  
+  if (!email || !password) {
+    showToast('请填写邮箱和密码', 'error');
+    return;
+  }
+  
+  try {
+    const data = await api('/auth/login', {
+      method: 'POST',
+      body: { email, password }
+    });
+    
+    saveAuth(data.token, data.user);
+    closeLogin();
+    updateUserBar();
+    refreshPersonalities();
+    showToast('登录成功');
+  } catch (e) {
+    showToast(e.message, 'error');
+  }
+}
+
+async function doRegister() {
+  const email = document.getElementById('regEmail').value.trim();
+  const nickname = document.getElementById('regNickname').value.trim();
+  const password = document.getElementById('regPassword').value;
+  
+  if (!email || !password) {
+    showToast('请填写邮箱和密码', 'error');
+    return;
+  }
+  
+  if (password.length < 6) {
+    showToast('密码至少需要6个字符', 'error');
+    return;
+  }
+  
+  try {
+    const data = await api('/auth/register', {
+      method: 'POST',
+      body: { email, nickname, password }
+    });
+    
+    saveAuth(data.token, data.user);
+    closeLogin();
+    updateUserBar();
+    refreshPersonalities();
+    showToast('注册成功');
+  } catch (e) {
+    showToast(e.message, 'error');
+  }
+}
+
+async function doGuest() {
+  try {
+    const data = await api('/auth/guest', { method: 'POST' });
+    saveAuth(data.token, data.user);
+    closeLogin();
+    updateUserBar();
+    refreshPersonalities();
+    showToast('进入游客模式');
+  } catch (e) {
+    showToast(e.message, 'error');
+  }
+}
+
+function doLogout() {
+  clearAuth();
+  updateUserBar();
+  refreshPersonalities();
+  showToast('已退出登录');
+}
+
+function openCustomPersonaModal() {
+  if (!currentUser) {
+    showToast('请先登录', 'error');
+    openLogin();
+    return;
+  }
+  document.getElementById('cpName').value = '';
+  document.getElementById('cpEmoji').value = '🎭';
+  document.getElementById('cpDesc').value = '';
+  document.getElementById('cpOpen').value = '';
+  document.getElementById('cpResponses').value = '';
+  document.getElementById('customPersonaModal').classList.add('on');
+}
+
+function closeCustomPersonaModal() {
+  document.getElementById('customPersonaModal').classList.remove('on');
+}
+
+async function saveCustomPersona() {
+  const name = document.getElementById('cpName').value.trim();
+  const emoji = document.getElementById('cpEmoji').value.trim() || '🎭';
+  const desc = document.getElementById('cpDesc').value.trim();
+  const openText = document.getElementById('cpOpen').value.trim();
+  const responsesText = document.getElementById('cpResponses').value.trim();
+  
+  if (!name) {
+    showToast('请输入人格名称', 'error');
+    return;
+  }
+  
+  try {
+    let responses = {};
+    if (responsesText) {
+      try {
+        responses = JSON.parse(responsesText);
+      } catch (e) {
+        showToast('回应模板JSON格式错误', 'error');
+        return;
+      }
+    }
+    
+    let open = [];
+    if (openText) {
+      open = openText.split('\n').filter(l => l.trim());
+    }
+    
+    const newPersona = {
+      name,
+      emoji,
+      description: desc,
+      open,
+      r: responses,
+      tip: {},
+      sug: {},
+      warn: ''
+    };
+    
+    const key = await api('/engine/personalities', {
+      method: 'POST',
+      body: newPersona
+    });
+    
+    closeCustomPersonaModal();
+    showToast('自定义人格创建成功');
+    refreshPersonalities();
+    
+  } catch (e) {
+    showToast(e.message, 'error');
+  }
+}
+
+async function refreshPersonalities() {
+  try {
+    personalities = await api('/engine/personalities');
+    categorizePersonalities();
+    renderPersonalityTabs();
+  } catch (e) {
+    console.error('刷新人格列表失败:', e);
+  }
+}
+
+function categorizePersonalities() {
+  defaultPersonalities = [];
+  customPersonalities = [];
+  
+  personalities.forEach(p => {
+    if (p.isCustom) {
+      customPersonalities.push(p);
+    } else {
+      defaultPersonalities.push(p);
+    }
+  });
+}
+
+function renderPersonalityTabs() {
+  ['mTabs', 'tTabs'].forEach((tabsId, idx) => {
+    const tabs = document.getElementById(tabsId);
+    const gridId = idx === 0 ? 'mp' : 'tp';
+    const currentKey = idx === 0 ? S.mp : S.tp;
+    
+    const hasCustom = customPersonalities.length > 0;
+    
+    if (hasCustom) {
+      tabs.innerHTML = `
+        <button class="on" data-tab="default">默认</button>
+        <button data-tab="custom">自定义 <span class="badge">${customPersonalities.length}</span></button>
+      `;
+      
+      tabs.querySelectorAll('button').forEach(btn => {
+        btn.onclick = () => {
+          tabs.querySelectorAll('button').forEach(b => b.classList.remove('on'));
+          btn.classList.add('on');
+          renderPersonalityGrid(gridId, btn.dataset.tab, idx === 0);
+        };
+      });
+    } else {
+      tabs.innerHTML = '';
+    }
+    
+    renderPersonalityGrid(gridId, 'default', idx === 0);
+  });
+}
+
+function renderPersonalityGrid(gridId, tab, isMe) {
+  const el = document.getElementById(gridId);
+  let list = tab === 'custom' ? customPersonalities : defaultPersonalities;
+  const currentKey = isMe ? S.mp : S.tp;
+  
+  el.innerHTML = '';
+  
+  list.forEach(p => {
+    const b = document.createElement('button');
+    b.dataset.v = p.key;
+    if (p.key === currentKey) b.className = 'on';
+    if (p.isCustom) b.classList.add('custom');
+    
+    const customBadge = p.isCustom ? '<span style="font-size:9px;color:var(--pk)">自定义</span>' : '';
+    b.innerHTML = `<span class="pn">${p.emoji} ${p.name}</span><span class="pd">${p.description || ''} ${customBadge}</span>`;
+    
+    b.onclick = () => {
+      el.querySelectorAll('button').forEach(x => x.classList.remove('on'));
+      b.classList.add('on');
+      if (isMe) {
+        S.mp = p.key;
+      } else {
+        S.tp = p.key;
+      }
+    };
+    el.appendChild(b);
+  });
+  
+  const addBtn = document.createElement('button');
+  addBtn.className = 'add-persona';
+  addBtn.innerHTML = `<span class="pn">➕</span><span class="pd">创建自定义</span>`;
+  addBtn.onclick = openCustomPersonaModal;
+  el.appendChild(addBtn);
+  
+  const currentExists = list.some(p => p.key === currentKey);
+  if (!currentExists && list.length > 0) {
+    const firstBtn = el.querySelector('button[data-v]');
+    if (firstBtn) firstBtn.click();
+  }
+}
+
+async function initApp() {
+  try {
+    const [pList, sList] = await Promise.all([
+      api('/engine/personalities'),
+      api('/engine/stages')
+    ]);
+    
+    personalities = pList;
+    stages = sList;
+    categorizePersonalities();
+    
+    if (loadAuth()) {
+      updateUserBar();
+      await refreshPersonalities();
+    }
+    
+    initSetup();
+  } catch (e) {
+    console.error('初始化失败:', e);
+    showToast('加载数据失败，请刷新重试', 'error');
+  }
+}
+
+function initSetup() {
+  renderPersonalityTabs();
+  
+  const sr = document.getElementById('sr');
+  sr.innerHTML = '';
+  stages.forEach(s => {
+    const b = document.createElement('button');
+    b.textContent = s.n;
+    b.dataset.v = s.k;
+    if (s.k === 'strangers') b.className = 'on';
+    b.onclick = () => {
+      sr.querySelectorAll('button').forEach(x => x.classList.remove('on'));
+      b.classList.add('on');
+      S.stage = s.k;
+    };
+    sr.appendChild(b);
+  });
+  
+  ['mg', 'tg'].forEach(id => {
+    document.getElementById(id).querySelectorAll('button').forEach(b => {
+      b.onclick = () => {
+        document.getElementById(id).querySelectorAll('button').forEach(x => x.classList.remove('on'));
+        b.classList.add('on');
+        S[id] = b.dataset.v;
+      };
+    });
+  });
+  
+  document.getElementById('etog').querySelectorAll('button').forEach(b => {
+    if (b.classList.contains('soon')) {
+      b.onclick = () => showToast('功能开发中，敬请期待', 'error');
+      return;
+    }
+    b.onclick = () => {
+      document.getElementById('etog').querySelectorAll('button').forEach(x => x.classList.remove('on'));
+      b.classList.add('on');
+      S.eng = b.dataset.v;
+    };
+  });
+}
+
+function show(n) {
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('on'));
+  document.getElementById('P' + n).classList.add('on');
+}
+
+function back() {
+  S.conversationId = null;
+  S.hist = [];
+  show(0);
+}
+
+function go(mode) {
+  if (!currentUser) {
+    openLogin();
+    return;
+  }
+  
+  if (mode === 'chat') {
+    startChat();
+  } else {
+    startSim();
+  }
+}
+
+function getPersonalityByKey(key) {
+  return personalities.find(p => p.key === key) || { name: '神秘人', emoji: '🎭', description: '' };
+}
+
+async function startChat() {
+  S.hist = [];
+  S.conversationId = null;
+  
+  const tp = getPersonalityByKey(S.tp);
+  document.getElementById('ct').textContent = `${tp.emoji} ${tp.name}${gi(S.tg)}`;
+  const stName = stages.find(s => s.k === S.stage)?.n || '';
+  document.getElementById('cs').textContent = `${tp.name} · ${stName}`;
+  document.getElementById('ml').innerHTML = '';
+  document.getElementById('aa').textContent = '开始聊天吧～';
+  document.getElementById('sl').innerHTML = '';
+  document.getElementById('aw').style.display = 'none';
+  
+  const badge = document.getElementById('ebadge');
+  const labels = { local: '🏠 常规', ai: '🤖 高阶', remote: '🌐 远程' };
+  badge.textContent = labels[S.eng] || labels.local;
+  badge.className = 'engine-badge ' + S.eng;
+  
+  show(1);
+  
+  const activeStages = ['crush', 'pursue', 'flirting', 'dating_early', 'dating', 'stable', 'longterm', 'married'];
+  const specialStages = {
+    conflict: '当前处于冷战期，TA可能不会主动发消息。试试主动破冰？',
+    crisis: '关系处于危机期，气氛比较紧张。谨慎发言。',
+    breakup: '已分手状态。TA可能不会像以前那样回应。'
+  };
+  
+  if (activeStages.includes(S.stage)) {
+    try {
+      const conv = await api('/engine/conversations', {
+        method: 'POST',
+        body: {
+          myGender: S.mg,
+          myPersonality: S.mp,
+          taGender: S.tg,
+          taPersonality: S.tp,
+          stage: S.stage,
+          engineType: S.eng
+        }
+      });
+      
+      S.conversationId = conv.conversation.id;
+      
+      if (conv.openingMessage) {
+        setTimeout(() => {
+          addMsg('ta', conv.openingMessage.text);
+          loadQuota();
+        }, 600);
+      }
+    } catch (e) {
+      showToast(e.message, 'error');
+    }
+  } else if (specialStages[S.stage]) {
+    setTimeout(() => {
+      addSysMsg('💡 ' + specialStages[S.stage]);
+    }, 400);
+  }
+}
+
+function addMsg(who, text) {
+  const ml = document.getElementById('ml');
+  const d = document.createElement('div');
+  d.className = 'mrow ' + who;
+  d.innerHTML = `<div class="mav">${gi(who === 'me' ? S.mg : S.tg)}</div><div class="mbb">${esc(text)}</div>`;
+  ml.appendChild(d);
+  ml.scrollTop = ml.scrollHeight;
+  S.hist.push({ who, text });
+}
+
+function addSysMsg(text) {
+  const ml = document.getElementById('ml');
+  const d = document.createElement('div');
+  d.className = 'sys-msg';
+  d.textContent = text;
+  ml.appendChild(d);
+  ml.scrollTop = ml.scrollHeight;
+}
+
+function showTyp() {
+  const ml = document.getElementById('ml');
+  const d = document.createElement('div');
+  d.className = 'typing';
+  d.id = 'typ';
+  d.innerHTML = '<i></i><i></i><i></i>';
+  ml.appendChild(d);
+  ml.scrollTop = ml.scrollHeight;
+}
+
+function hideTyp() {
+  const e = document.getElementById('typ');
+  if (e) e.remove();
+}
+
+async function send() {
+  const inp = document.getElementById('ci');
+  const text = inp.value.trim();
+  if (!text) return;
+  
+  inp.value = '';
+  inp.style.height = 'auto';
+  addMsg('me', text);
+  
+  showTyp();
+  
+  try {
+    const result = await api('/engine/reply', {
+      method: 'POST',
+      body: {
+        conversationId: S.conversationId,
+        message: text,
+        myGender: S.mg,
+        myPersonality: S.mp,
+        taGender: S.tg,
+        taPersonality: S.tp,
+        stage: S.stage,
+        engineType: S.eng
+      }
+    });
+    
+    hideTyp();
+    
+    if (result.conversationId) {
+      S.conversationId = result.conversationId;
+    }
+    
+    addMsg('ta', result.reply.text);
+    
+    if (result.quota) {
+      document.getElementById('quotaInfo').textContent = 
+        `配额: ${result.quota.used}/${result.quota.limit} (剩余: ${result.quota.remaining})`;
+    }
+    
+    await doAdvisor(result.reply.type || classify(result.reply.text), result.reply.text);
+    
+  } catch (err) {
+    hideTyp();
+    addSysMsg('⚠️ 引擎错误：' + err.message);
+  }
+}
+
+function ck(e) {
+  if (e.key === 'Enter' && !e.shiftKey) {
+    e.preventDefault();
+    send();
+  }
+  setTimeout(() => {
+    e.target.style.height = 'auto';
+    e.target.style.height = Math.min(e.target.scrollHeight, 70) + 'px';
+  }, 0);
+}
+
+function classify(text) {
+  const t = (text || '').toLowerCase();
+  const patterns = {
+    hi: [/^(嗨|嘿|你好|hi|hello|hey|在吗|在不|早|晚上好|下午好)/],
+    praise: [/(好看|漂亮|帅|厉害|棒|优秀|可爱|有才|牛|不错|美|赞)/],
+    care: [/(注意|照顾|休息|保重|吃饭|身体|冷|热|别太|辛苦|累|加衣|早睡)/],
+    flirt: [/(想你|喜欢|心动|约会|在一起|暧昧|亲|抱|牵手|暗恋|表白|撩|爱你)/],
+    sad: [/(难过|伤心|哭|不开心|烦|郁闷|焦虑|失落|难受|累了|崩溃|emo)/],
+    happy: [/(开心|高兴|太好了|哈哈|赢了|成功|恭喜|庆祝|爽|激动)/],
+    ask: [/(？|\?|吗|呢|怎么|什么|为什么|哪|几|多少|如何|是不是)/],
+    argue: [/(不同意|不对|不是|你错|才不|反对|但是|可是)/],
+    bye: [/(再见|拜拜|晚安|bye|睡了|走了|下次|先这样)/]
+  };
+  
+  for (const [type, regexes] of Object.entries(patterns)) {
+    if (regexes.some(r => r.test(t))) return type;
+  }
+  return 'chat';
+}
+
+async function doAdvisor(msgType, taResp) {
+  try {
+    const result = await api('/engine/advise', {
+      method: 'POST',
+      body: {
+        conversationId: S.conversationId,
+        taMessage: taResp,
+        myGender: S.mg,
+        myPersonality: S.mp,
+        taGender: S.tg,
+        taPersonality: S.tp,
+        stage: S.stage,
+        engineType: S.eng,
+        msgType
+      }
+    });
+    
+    document.getElementById('aa').textContent = result.analysis || '';
+    const sl = document.getElementById('sl');
+    sl.innerHTML = '';
+    (result.suggestions || []).forEach(s => {
+      const b = document.createElement('button');
+      b.textContent = s;
+      b.onclick = () => {
+        document.getElementById('ci').value = s;
+        send();
+      };
+      sl.appendChild(b);
+    });
+    
+    if (result.warning) {
+      document.getElementById('aw').style.display = 'block';
+      document.getElementById('wt').textContent = result.warning;
+    } else {
+      document.getElementById('aw').style.display = 'none';
+    }
+  } catch (e) {
+    console.error('获取建议失败:', e);
+  }
+}
+
+function toggleAdv() {
+  document.getElementById('ap').classList.toggle('hidden');
+}
+
+function clrChat() {
+  S.hist = [];
+  S.conversationId = null;
+  document.getElementById('ml').innerHTML = '';
+  document.getElementById('aa').textContent = '开始聊天吧～';
+  document.getElementById('sl').innerHTML = '';
+  document.getElementById('aw').style.display = 'none';
+}
+
+async function startSim() {
+  const mp = getPersonalityByKey(S.mp);
+  const tp = getPersonalityByKey(S.tp);
+  document.getElementById('sb').innerHTML = 
+    `<div class="empty"><span>🎭</span>选择场景点击「生成」<br><b>${mp.emoji} ${mp.name}</b> vs <b>${tp.emoji} ${tp.name}</b></div>`;
+  show(2);
+}
+
+async function genSim() {
+  const topic = document.getElementById('stopic').value;
+  const mp = getPersonalityByKey(S.mp);
+  const tp = getPersonalityByKey(S.tp);
+  const sb = document.getElementById('sb');
+  
+  sb.innerHTML = `<div class="simpair"><span>${gi(S.mg)} ${mp.emoji} ${mp.name}</span><span class="vs">VS</span><span>${gi(S.tg)} ${tp.emoji} ${tp.name}</span></div>`;
+  
+  try {
+    const result = await api('/engine/simulate', {
+      method: 'POST',
+      body: {
+        scenarioKey: topic,
+        myPersonality: S.mp,
+        taPersonality: S.tp,
+        myGender: S.mg,
+        taGender: S.tg,
+        stage: S.stage,
+        engineType: S.eng
+      }
+    });
+    
+    if (result.quota) {
+      document.getElementById('quotaInfo').textContent = 
+        `配额: ${result.quota.used}/${result.quota.limit} (剩余: ${result.quota.remaining})`;
+    }
+    
+    let delay = 150;
+    result.turns.forEach((turn) => {
+      setTimeout(() => {
+        const isMe = turn.who === 'me';
+        const gen = isMe ? S.mg : S.tg;
+        const div = document.createElement('div');
+        div.className = 'sturn';
+        div.innerHTML = `<div class="smsg ${isMe ? 'l' : 'r'}"><div class="sa">${gi(gen)}</div><div class="sb">${esc(turn.text)}</div></div><div class="scmt">🧠 ${turn.comment}</div>`;
+        sb.appendChild(div);
+        sb.scrollTop = sb.scrollHeight;
+      }, delay);
+      delay += 400 + Math.random() * 200;
+    });
+  } catch (err) {
+    sb.innerHTML += `<div class="sys-msg">⚠️ 生成失败：${err.message}</div>`;
+  }
+}
+
+document.getElementById('loginModal').addEventListener('click', e => {
+  if (e.target === document.getElementById('loginModal')) closeLogin();
+});
+document.getElementById('customPersonaModal').addEventListener('click', e => {
+  if (e.target === document.getElementById('customPersonaModal')) closeCustomPersonaModal();
+});
+
+initApp();
+</script>
+</body>
+</html>

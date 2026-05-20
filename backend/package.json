@@ -1,0 +1,25 @@
+{
+  "name": "love-strategist-backend",
+  "version": "2.0.0",
+  "description": "恋爱军师 - 后端服务",
+  "main": "app.js",
+  "scripts": {
+    "start": "node app.js",
+    "dev": "nodemon app.js"
+  },
+  "dependencies": {
+    "express": "^4.18.2",
+    "cors": "^2.8.5",
+    "jsonwebtoken": "^9.0.2",
+    "bcryptjs": "^2.4.3",
+    "uuid": "^9.0.0",
+    "ws": "^8.14.2",
+    "node-fetch": "^2.7.0",
+    "dotenv": "^16.3.1",
+    "sqlite3": "^5.1.6",
+    "express-rate-limit": "^7.1.5"
+  },
+  "devDependencies": {
+    "nodemon": "^3.0.1"
+  }
+}

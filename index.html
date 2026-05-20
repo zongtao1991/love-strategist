@@ -1,0 +1,1429 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>恋爱军师</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+:root{--bg:#0b0b12;--s1:#12121e;--s2:#1a1a2e;--s3:#222240;--bd:#2a2a4a;--t:#e8e8f0;--td:#8888aa;--tm:#555570;--ac:#7c5cff;--pk:#ff6b9d;--gn:#00d4aa;--r:12px}
+body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;background:var(--bg);color:var(--t);min-height:100vh}
+button{cursor:pointer;border:none;font-family:inherit;font-size:inherit;background:none;color:inherit}
+input,textarea,select{font-family:inherit}
+::-webkit-scrollbar{width:5px}::-webkit-scrollbar-thumb{background:var(--bd);border-radius:3px}
+
+.page{display:none;min-height:100vh}.page.on{display:flex;flex-direction:column}
+.center{display:flex;flex-direction:column;align-items:center;max-width:920px;margin:0 auto;width:100%;padding:32px 16px;gap:28px}
+
+/* Setup */
+.logo{font-size:32px;font-weight:800;background:linear-gradient(135deg,var(--ac),var(--pk));-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+.sub{color:var(--td);font-size:14px;margin-top:-16px}
+.cards{display:flex;gap:20px;width:100%;flex-wrap:wrap}
+.card{flex:1;min-width:300px;background:var(--s2);border:1px solid var(--bd);border-radius:var(--r);padding:20px;display:flex;flex-direction:column;gap:14px}
+.card h3{font-size:16px;display:flex;align-items:center;gap:6px}
+.lbl{font-size:12px;color:var(--td);margin-bottom:4px}
+
+.tog{display:flex;gap:6px;flex-wrap:wrap}
+.tog button{padding:7px 16px;border-radius:8px;background:var(--s1);border:1px solid var(--bd);color:var(--td);font-size:13px;transition:.2s}
+.tog button:hover{border-color:var(--ac);color:var(--t)}
+.tog button.on{background:var(--ac);color:#fff;border-color:var(--ac)}
+
+.pgrid{display:grid;grid-template-columns:1fr 1fr;gap:6px}
+.pgrid button{padding:8px 10px;border-radius:8px;background:var(--s1);border:1px solid var(--bd);color:var(--td);text-align:left;font-size:13px;transition:.2s;line-height:1.3}
+.pgrid button:hover{border-color:var(--ac);color:var(--t)}
+.pgrid button.on{background:var(--ac);color:#fff;border-color:var(--ac)}
+.pgrid button .pn{font-weight:600}.pgrid button .pd{display:block;font-size:11px;opacity:.7;margin-top:1px}
+
+.stagerow{display:flex;gap:8px;flex-wrap:wrap}
+.stagerow button{padding:7px 14px;border-radius:20px;background:var(--s2);border:1px solid var(--bd);color:var(--td);font-size:13px;transition:.2s}
+.stagerow button:hover{border-color:var(--pk)}
+.stagerow button.on{background:var(--pk);color:#fff;border-color:var(--pk)}
+.stagerow button[data-v="crush"]{border-left:3px solid #ffcc00}
+.stagerow button[data-v="pursue"]{border-left:3px solid #ff9933}
+.stagerow button[data-v="flirting"]{border-left:3px solid #ff66b2}
+.stagerow button[data-v="dating_early"]{border-left:3px solid #ff6699}
+.stagerow button[data-v="dating"]{border-left:3px solid #ff3366}
+.stagerow button[data-v="stable"]{border-left:3px solid #99ccff}
+.stagerow button[data-v="longterm"]{border-left:3px solid #6699cc}
+.stagerow button[data-v="conflict"]{border-left:3px solid #9999cc}
+.stagerow button[data-v="crisis"]{border-left:3px solid #cc6666}
+.stagerow button[data-v="married"]{border-left:3px solid #ffcc99}
+.stagerow button[data-v="breakup"]{border-left:3px solid #666699}
+
+/* Engine selector */
+.engine-bar{width:100%;display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+.engine-bar .lbl{margin-bottom:0;margin-right:4px;white-space:nowrap}
+.engine-bar .etog{display:flex;gap:6px}
+.engine-bar .etog button{padding:6px 14px;border-radius:8px;background:var(--s1);border:1px solid var(--bd);color:var(--td);font-size:13px;transition:.2s}
+.engine-bar .etog button:hover{border-color:var(--gn)}
+.engine-bar .etog button.on{background:var(--gn);color:#fff;border-color:var(--gn)}
+.engine-bar .etog button.soon{opacity:.5}
+.engine-bar .ecfg-btn{margin-left:auto;padding:5px 12px;border-radius:8px;background:var(--s2);border:1px solid var(--bd);color:var(--td);font-size:12px}
+.engine-bar .ecfg-btn:hover{color:var(--t);border-color:var(--ac)}
+
+/* Config modal */
+.modal-overlay{display:none;position:fixed;inset:0;background:#000a;z-index:100;align-items:center;justify-content:center}
+.modal-overlay.on{display:flex}
+.modal{background:var(--s2);border:1px solid var(--bd);border-radius:var(--r);padding:24px;width:90%;max-width:520px;max-height:85vh;overflow-y:auto}
+.modal h3{font-size:16px;margin-bottom:16px;display:flex;align-items:center;gap:8px}
+.modal .close{margin-left:auto;font-size:18px;color:var(--td);padding:2px 6px}
+.modal .close:hover{color:var(--t)}
+.cfg-group{margin-bottom:16px}
+.cfg-group label{display:block;font-size:12px;color:var(--td);margin-bottom:4px}
+.cfg-group input,.cfg-group select,.cfg-group textarea{width:100%;padding:8px 12px;border-radius:8px;background:var(--s1);border:1px solid var(--bd);color:var(--t);font-size:13px;outline:none}
+.cfg-group input:focus,.cfg-group textarea:focus{border-color:var(--ac)}
+.cfg-group textarea{resize:vertical;min-height:60px}
+.cfg-group .hint{font-size:11px;color:var(--tm);margin-top:3px}
+.cfg-section{padding:12px;background:var(--s1);border-radius:8px;margin-bottom:12px}
+.cfg-section h4{font-size:13px;color:var(--ac);margin-bottom:10px}
+.cfg-save{padding:8px 24px;border-radius:8px;background:var(--ac);color:#fff;font-size:14px;font-weight:600}
+.cfg-save:hover{background:#6a4ae0}
+.cfg-tag{display:inline-block;padding:2px 8px;border-radius:4px;font-size:11px;margin-left:6px}
+.cfg-tag.ready{background:#00d4aa33;color:var(--gn)}
+.cfg-tag.soon{background:#ff6b9d33;color:var(--pk)}
+
+/* Actions */
+.actions{display:flex;gap:14px;flex-wrap:wrap;justify-content:center}
+.abtn{padding:13px 32px;border-radius:var(--r);font-size:15px;font-weight:700;transition:.2s}
+.abtn:hover{transform:translateY(-2px);box-shadow:0 6px 20px #0005}
+.b1{background:linear-gradient(135deg,var(--ac),#5a3fd4);color:#fff}
+.b2{background:linear-gradient(135deg,var(--pk),#d4507a);color:#fff}
+
+/* ===== CHAT ===== */
+.chatwrap{height:100vh;display:flex;flex-direction:column}
+.chtop{display:flex;align-items:center;gap:12px;padding:10px 16px;background:var(--s1);border-bottom:1px solid var(--bd);flex-shrink:0}
+.chtop .bk{font-size:20px;padding:4px 8px;color:var(--td)}.chtop .bk:hover{color:var(--t)}
+.chtop h4{font-size:14px;flex:1}.chtop span{font-size:12px;color:var(--td)}
+.chtop .engine-badge{padding:3px 8px;border-radius:6px;font-size:11px;font-weight:600}
+.chtop .engine-badge.local{background:#00d4aa22;color:var(--gn)}
+.chtop .engine-badge.ai{background:#7c5cff22;color:var(--ac)}
+.chtop .engine-badge.remote{background:#ff6b9d22;color:var(--pk)}
+.chtop .clr{padding:5px 12px;border-radius:8px;background:var(--s2);border:1px solid var(--bd);color:var(--td);font-size:12px}
+.chtop .clr:hover{color:var(--t)}
+.chtop .adv-toggle{padding:5px 12px;border-radius:8px;background:var(--s2);border:1px solid var(--bd);color:var(--td);font-size:12px}
+.chtop .adv-toggle:hover{color:var(--t)}
+
+.chbody{display:flex;flex:1;overflow:hidden}
+.msgs{flex:1;overflow-y:auto;padding:16px;display:flex;flex-direction:column;gap:10px}
+.mrow{display:flex;gap:8px;max-width:72%}
+.mrow.me{align-self:flex-end;flex-direction:row-reverse}
+.mrow.ta{align-self:flex-start}
+.mav{width:32px;height:32px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:16px;flex-shrink:0;background:var(--s2)}
+.mbb{padding:9px 13px;border-radius:14px;font-size:14px;line-height:1.5;word-break:break-word}
+.mrow.me .mbb{background:#2a2a5a;border-bottom-right-radius:4px}
+.mrow.ta .mbb{background:#1e3a2e;border-bottom-left-radius:4px}
+
+.sys-msg{align-self:center;padding:6px 14px;background:var(--s1);border-radius:20px;font-size:12px;color:var(--tm)}
+
+.typing{align-self:flex-start;display:flex;gap:4px;padding:10px 14px;background:#1e3a2e;border-radius:14px;border-bottom-left-radius:4px}
+.typing i{width:5px;height:5px;background:var(--td);border-radius:50%;display:block;animation:tb .6s ease-in-out infinite}
+.typing i:nth-child(2){animation-delay:.15s}.typing i:nth-child(3){animation-delay:.3s}
+@keyframes tb{0%,100%{transform:translateY(0)}50%{transform:translateY(-3px)}}
+
+.advpanel{width:280px;border-left:1px solid var(--bd);background:var(--s1);overflow-y:auto;padding:14px;display:flex;flex-direction:column;gap:10px;flex-shrink:0}
+.advpanel.hidden{display:none}
+.advpanel h4{font-size:13px;color:var(--ac)}
+.advbox{background:var(--s2);border-radius:8px;padding:10px;font-size:13px;line-height:1.5}
+.advbox .al{font-weight:600;color:var(--pk);font-size:12px;margin-bottom:4px}
+.advbox .ac{color:var(--td);white-space:pre-line}
+.slist{display:flex;flex-direction:column;gap:5px;margin-top:6px}
+.slist button{padding:8px 10px;background:var(--s1);border:1px solid var(--bd);border-radius:8px;color:var(--t);font-size:13px;text-align:left;transition:.2s;line-height:1.3}
+.slist button:hover{border-color:var(--ac);background:var(--s3)}
+.wn{color:#ff9966;font-size:12px;margin-top:6px;line-height:1.4;white-space:pre-line}
+
+.chinput{display:flex;gap:8px;padding:10px 16px;background:var(--s1);border-top:1px solid var(--bd);flex-shrink:0}
+.chinput textarea{flex:1;padding:9px 14px;border-radius:18px;background:var(--s2);border:1px solid var(--bd);color:var(--t);font-size:14px;outline:none;resize:none;max-height:80px;line-height:1.4}
+.chinput textarea:focus{border-color:var(--ac)}
+.chinput .snd{width:36px;height:36px;border-radius:50%;background:var(--ac);color:#fff;font-size:16px;display:flex;align-items:center;justify-content:center;flex-shrink:0;align-self:flex-end}
+
+/* ===== SIMULATION ===== */
+.simwrap{height:100vh;display:flex;flex-direction:column}
+.simtop{display:flex;align-items:center;gap:12px;padding:10px 16px;background:var(--s1);border-bottom:1px solid var(--bd);flex-shrink:0;flex-wrap:wrap}
+.simtop .bk{font-size:20px;padding:4px 8px;color:var(--td)}.simtop .bk:hover{color:var(--t)}
+.simtop h4{font-size:14px}
+.simtop select{padding:5px 10px;border-radius:8px;background:var(--s2);border:1px solid var(--bd);color:var(--t);font-size:13px;outline:none;margin-left:auto}
+.simtop select option{background:var(--s2)}
+.simtop .gen{padding:6px 16px;border-radius:8px;background:var(--pk);color:#fff;font-size:13px;font-weight:600}
+.simtop .gen:hover{background:#d4507a}
+
+.simbody{flex:1;overflow-y:auto;padding:20px;display:flex;flex-direction:column;gap:14px;max-width:660px;margin:0 auto;width:100%}
+.simpair{display:flex;justify-content:center;gap:20px;padding:10px;background:var(--s2);border-radius:var(--r);font-size:13px;color:var(--td)}
+.simpair .vs{color:var(--pk);font-weight:700;font-size:15px}
+
+.sturn{display:flex;flex-direction:column;gap:5px;animation:fi .35s ease}
+@keyframes fi{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:translateY(0)}}
+.smsg{display:flex;gap:8px;align-items:flex-start}
+.smsg.r{flex-direction:row-reverse}
+.smsg .sa{width:28px;height:28px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:14px;flex-shrink:0;background:var(--s2)}
+.smsg .sb{padding:8px 12px;border-radius:12px;font-size:14px;line-height:1.5;max-width:70%}
+.smsg.l .sb{background:#2a2a5a;border-bottom-left-radius:4px}
+.smsg.r .sb{background:#1e3a2e;border-bottom-right-radius:4px}
+.scmt{padding:6px 12px;background:var(--s1);border-left:3px solid var(--ac);border-radius:0 8px 8px 0;font-size:12px;color:var(--td);line-height:1.4;margin:0 36px}
+
+.empty{text-align:center;color:var(--tm);padding:60px 16px;font-size:14px}
+.empty span{font-size:40px;display:block;margin-bottom:10px}
+
+@media(max-width:700px){
+  .cards{flex-direction:column}
+  .advpanel{display:none!important}
+}
+</style>
+</head>
+<body>
+
+<!-- ===== SETUP ===== -->
+<div id="P0" class="page on">
+<div class="center">
+  <div class="logo">💘 恋爱军师</div>
+  <div class="sub">设定双方人设，开始你的恋爱攻略</div>
+
+  <!-- Engine selector -->
+  <div class="engine-bar">
+    <div class="lbl" style="margin-bottom:0">🔌 对话引擎</div>
+    <div class="etog" id="etog">
+      <button class="on" data-v="local">🏠 本地规则</button>
+      <button data-v="ai" class="soon">🤖 AI 大模型</button>
+      <button data-v="remote" class="soon">🌐 远程匹配</button>
+    </div>
+    <button class="ecfg-btn" onclick="openCfg()">⚙️ 设置</button>
+  </div>
+
+  <div class="cards">
+    <div class="card">
+      <h3>🙋 我的人设</h3>
+      <div><div class="lbl">性别</div>
+        <div class="tog" id="mg">
+          <button class="on" data-v="m">👦 男生</button>
+          <button data-v="f">👧 女生</button>
+          <button data-v="s">🔒 保密</button>
+        </div>
+      </div>
+      <div><div class="lbl">性格</div>
+        <div class="pgrid" id="mp"></div>
+      </div>
+    </div>
+    <div class="card">
+      <h3>💕 TA的人设</h3>
+      <div><div class="lbl">性别</div>
+        <div class="tog" id="tg">
+          <button data-v="m">👦 男生</button>
+          <button class="on" data-v="f">👧 女生</button>
+          <button data-v="s">🔒 保密</button>
+        </div>
+      </div>
+      <div><div class="lbl">性格</div>
+        <div class="pgrid" id="tp"></div>
+      </div>
+    </div>
+  </div>
+
+  <div style="width:100%">
+    <div class="lbl">💫 关系阶段</div>
+    <div class="stagerow" id="sr"></div>
+  </div>
+
+  <div class="actions">
+    <button class="abtn b1" onclick="go('chat')">💬 实战对话</button>
+    <button class="abtn b2" onclick="go('sim')">🎭 模拟对话</button>
+  </div>
+</div>
+</div>
+
+<!-- ===== CONFIG MODAL ===== -->
+<div class="modal-overlay" id="cfgModal">
+<div class="modal">
+  <h3>⚙️ 引擎设置 <button class="close" onclick="closeCfg()">✕</button></h3>
+
+  <!-- LOCAL -->
+  <div class="cfg-section" id="cfgLocal">
+    <h4>🏠 本地规则引擎 <span class="cfg-tag ready">当前</span></h4>
+    <p style="font-size:13px;color:var(--td);line-height:1.5">基于预设人格规则库生成回复，无需联网。8 种人格 × 10 类话术 × 7 种场景。</p>
+  </div>
+
+  <!-- AI -->
+  <div class="cfg-section" id="cfgAI">
+    <h4>🤖 AI 大模型引擎 <span class="cfg-tag soon" id="aiTag">即将上线</span></h4>
+    <div class="cfg-group">
+      <label>API Provider</label>
+      <select id="aiProvider" onchange="updateModelHint()">
+        <option value="openai">OpenAI</option>
+        <option value="anthropic">Anthropic (Claude)</option>
+        <option value="deepseek">DeepSeek</option>
+        <option value="qwen">阿里通义千问</option>
+        <option value="doubao">字节豆包</option>
+        <option value="wenxin">百度文心一言</option>
+        <option value="glm">智谱清言</option>
+        <option value="custom">自定义 Endpoint</option>
+      </select>
+      <div class="hint" id="modelHint">推荐模型：gpt-4o, gpt-4o-mini</div>
+    </div>
+    <div class="cfg-group">
+      <label>API Key</label>
+      <input type="password" id="aiKey" placeholder="sk-...">
+      <div class="hint">密钥仅存储在本地 localStorage，不会上传服务器</div>
+    </div>
+    <div class="cfg-group">
+      <label>API Endpoint</label>
+      <input id="aiEndpoint" placeholder="留空使用官方地址，或填写自定义地址">
+      <div class="hint">自定义时填写完整地址，如：https://api.openai.com/v1/chat/completions</div>
+    </div>
+    <div class="cfg-group">
+      <label>模型名称</label>
+      <input id="aiModel" placeholder="例如：gpt-4o">
+    </div>
+    <div class="cfg-group">
+      <label>API 调用超时（秒）</label>
+      <input id="aiTimeout" type="number" value="30" min="10" max="120">
+      <div class="hint">建议 30-60 秒，大模型响应可能需要更长时间</div>
+    </div>
+    <div class="cfg-group">
+      <label>温度参数 (Temperature)</label>
+      <input id="aiTemperature" type="number" step="0.1" value="0.8" min="0" max="2">
+      <div class="hint">0=更确定，1=更随机，推荐 0.7-0.9</div>
+    </div>
+    <div class="cfg-group">
+      <label>角色预设风格</label>
+      <select id="aiStyle">
+        <option value="default">默认（贴近真人聊天）</option>
+        <option value="cute">可爱卖萌风</option>
+        <option value="mature">成熟稳重风</option>
+        <option value="humor">幽默风趣风</option>
+        <option value="poetic">文艺浪漫风</option>
+        <option value="dominant">强势霸总风</option>
+      </select>
+      <div class="hint">AI 回复的整体语言风格偏向</div>
+    </div>
+    <div class="cfg-group">
+      <label>System Prompt 补充（可选）</label>
+      <textarea id="aiSysPrompt" rows="3" placeholder="额外的角色扮演指令..."></textarea>
+      <div class="hint">人格/性别/阶段信息会自动注入，这里填写补充指令或特殊要求</div>
+    </div>
+    <div class="cfg-group" style="padding:10px;background:#1e1e30;border-radius:8px">
+      <label style="display:flex;align-items:center;gap:8px;cursor:pointer">
+        <input type="checkbox" id="aiUseFallback" checked> 
+        <span style="font-weight:500">AI 故障时自动降级到本地规则引擎</span>
+      </label>
+      <div class="hint" style="margin-top:4px">当 AI API 调用失败或超时时，自动切换到本地规则引擎，保证不中断对话</div>
+    </div>
+  </div>
+
+  <!-- REMOTE -->
+  <div class="cfg-section" id="cfgRemote">
+    <h4>🌐 远程匹配引擎 <span class="cfg-tag soon" id="remoteTag">即将上线</span></h4>
+    <div class="cfg-group">
+      <label>匹配服务 URL</label>
+      <input id="remoteUrl" placeholder="wss://match.example.com/ws">
+      <div class="hint">WebSocket 端点，用于实时匹配在线用户，如 Soul 或探探的匹配机制</div>
+    </div>
+    <div class="cfg-group">
+      <label>用户昵称</label>
+      <input id="remoteNick" placeholder="匿名用户">
+      <div class="hint">匹配时显示的昵称，可匿名</div>
+    </div>
+    <div class="cfg-group">
+      <label>匹配偏好</label>
+      <select id="remotePref">
+        <option value="personality">按人格匹配（互补型）</option>
+        <option value="same">按人格匹配（同类型）</option>
+        <option value="compatible">AI 智能匹配</option>
+        <option value="stage">按关系阶段匹配</option>
+        <option value="interest">按兴趣标签匹配</option>
+        <option value="age">按年龄匹配</option>
+        <option value="region">按地区匹配</option>
+        <option value="random">完全随机</option>
+      </select>
+      <div class="hint">选择匹配策略，互补型适合性格不同产生吸引力，同类型更有共鸣</div>
+    </div>
+    <div class="cfg-group">
+      <label>性别偏好</label>
+      <select id="remoteGenderPref">
+        <option value="any">不限</option>
+        <option value="m">只匹配男生</option>
+        <option value="f">只匹配女生</option>
+      </select>
+    </div>
+    <div class="cfg-group">
+      <label>匹配超时（秒）</label>
+      <input id="remoteTimeout" type="number" value="60" min="10" max="300">
+      <div class="hint">等待匹配的最长时间，超时后可选择继续等待或取消</div>
+    </div>
+    <div class="cfg-group" style="padding:10px;background:#1e1e30;border-radius:8px">
+      <label style="display:flex;align-items:center;gap:8px;cursor:pointer">
+        <input type="checkbox" id="remoteAnonymous" checked> 
+        <span style="font-weight:500">匿名匹配模式</span>
+      </label>
+      <div class="hint" style="margin-top:4px">隐藏真实身份信息，只公开人设和匹配标签，保护隐私</div>
+    </div>
+    <div class="cfg-group" style="padding:10px;background:#1e1e30;border-radius:8px">
+      <label style="display:flex;align-items:center;gap:8px;cursor:pointer">
+        <input type="checkbox" id="remoteQuickChat" checked> 
+        <span style="font-weight:500">快速聊天模式</span>
+      </label>
+      <div class="hint" style="margin-top:4px">匹配成功后立即进入对话，无需确认</div>
+    </div>
+    <div class="cfg-group">
+      <label>虚拟人服务 URL（可选）</label>
+      <input id="avatarUrl" placeholder="https://avatar.example.com/api">
+      <div class="hint">接入虚拟人形象，为对话增加视觉/语音反馈（如 AI 恋人）</div>
+    </div>
+    <div class="cfg-group">
+      <label>语音服务 URL（可选）</label>
+      <input id="voiceUrl" placeholder="https://tts.example.com/api">
+      <div class="hint">TTS 语音合成服务，让文字转为语音</div>
+    </div>
+  </div>
+
+  <!-- PERSONA IMPORT/EXPORT -->
+  <div class="cfg-section">
+    <h4>📦 人格数据</h4>
+    <div style="display:flex;gap:8px;flex-wrap:wrap">
+      <button class="cfg-save" style="font-size:12px;padding:6px 14px" onclick="exportPersona()">📤 导出人格</button>
+      <button class="cfg-save" style="font-size:12px;padding:6px 14px;background:var(--pk)" onclick="document.getElementById('importFile').click()">📥 导入人格</button>
+      <input type="file" id="importFile" accept=".json" style="display:none" onchange="importPersona(event)">
+    </div>
+    <div class="hint" style="margin-top:6px">导出/导入自定义人格包，可分享给他人或用于远程匹配</div>
+  </div>
+
+  <div style="text-align:right;margin-top:8px">
+    <button class="cfg-save" onclick="saveCfg()">💾 保存设置</button>
+  </div>
+</div>
+</div>
+
+<!-- ===== CHAT ===== -->
+<div id="P1" class="page">
+<div class="chatwrap">
+  <div class="chtop">
+    <button class="bk" onclick="back()">←</button>
+    <div><h4 id="ct"></h4><span id="cs"></span></div>
+    <span class="engine-badge local" id="ebadge">🏠 本地</span>
+    <div style="margin-left:auto;display:flex;gap:6px">
+      <button class="adv-toggle" onclick="toggleAdv()">🧠 军师</button>
+      <button class="clr" onclick="clrChat()">🗑️</button>
+    </div>
+  </div>
+  <div class="chbody">
+    <div class="msgs" id="ml"></div>
+    <div class="advpanel" id="ap">
+      <h4>🧠 恋爱军师</h4>
+      <div class="advbox"><div class="al">🔍 局势分析</div><div class="ac" id="aa">开始聊天吧～</div></div>
+      <div class="advbox"><div class="al">💡 推荐回复</div><div class="slist" id="sl"></div></div>
+      <div class="advbox" id="aw" style="display:none"><div class="al">⚠️ 避雷</div><div class="wn" id="wt"></div></div>
+    </div>
+  </div>
+  <div class="chinput">
+    <textarea id="ci" rows="1" placeholder="说点什么…" onkeydown="ck(event)"></textarea>
+    <button class="snd" onclick="send()">➤</button>
+  </div>
+</div>
+</div>
+
+<!-- ===== SIMULATION ===== -->
+<div id="P2" class="page">
+<div class="simwrap">
+  <div class="simtop">
+    <button class="bk" onclick="back()">←</button>
+    <h4>🎭 模拟对话</h4>
+    <select id="stopic">
+      <option value="first">🤝 初次搭讪</option>
+      <option value="daily">☕ 日常闲聊</option>
+      <option value="flirt">💗 暧昧试探</option>
+      <option value="date">🎬 约会邀请</option>
+      <option value="fight">😤 吵架和好</option>
+      <option value="night">🌙 深夜谈心</option>
+      <option value="confess">💘 表白时刻</option>
+    </select>
+    <button class="gen" onclick="genSim()">✨ 生成</button>
+  </div>
+  <div class="simbody" id="sb">
+    <div class="empty"><span>🎭</span>选择场景，点击「生成」</div>
+  </div>
+</div>
+</div>
+
+<script>
+// =====================================================
+//  ENGINE ABSTRACTION LAYER
+//  所有对话生成通过 Engine 接口，方便切换 local/ai/remote
+// =====================================================
+
+class Engine {
+  constructor(){ this.type='base'; }
+  /** 初始化引擎（加载配置等） */
+  async init(config){ this.config=config; }
+  /** 生成 TA 的回复。返回 {text, analysis?, suggestions?, warning?} */
+  async reply(context){ throw new Error('not implemented'); }
+  /** 生成模拟对话。返回 [{who,text,comment},...] */
+  async simulate(scenario, context){ throw new Error('not implemented'); }
+  /** 生成军师建议。返回 {analysis, suggestions:[], warning} */
+  async advise(context){ throw new Error('not implemented'); }
+  /** 引擎是否就绪 */
+  isReady(){ return true; }
+  /** 销毁/断开连接 */
+  async destroy(){}
+}
+
+// ----- LOCAL ENGINE (当前可用) -----
+class LocalEngine extends Engine {
+  constructor(){ super(); this.type='local'; }
+
+  async reply(ctx){
+    const p=P[ctx.taPersonality];
+    const mt=classify(ctx.lastMsg);
+    const pool=p.r[mt]||p.r.chat;
+    const text=pick(pool);
+    return {text, msgType:classify(text)};
+  }
+
+  async simulate(scenarioKey, ctx){
+    const sc=SCENARIOS[scenarioKey];
+    if(!sc)return [];
+    return sc.map((turn,i)=>{
+      const isMe=turn.w==='me';
+      const pers=isMe?ctx.myPersonality:ctx.taPersonality;
+      let msg;
+      if(scenarioKey==='confess'&&i===6) msg=CONFESS[ctx.myPersonality];
+      else if(scenarioKey==='confess'&&i===7) msg=CONFESS_R[ctx.taPersonality];
+      else if(scenarioKey==='date'&&i===6) msg=DATE_INV[ctx.myPersonality];
+      else if(scenarioKey==='date'&&i===7) msg=DATE_R[ctx.taPersonality];
+      else{const p=P[pers];const pool=p.r[turn.t]||p.r.chat;msg=pick(pool);}
+      return {who:turn.w, text:msg, comment:turn.c};
+    });
+  }
+
+  async advise(ctx){
+    const tp=P[ctx.taPersonality];
+    const mt=ctx.msgType||'chat';
+    const ana={
+      hi:'TA回复了打招呼，对话通道已开。回复越长越详细=越有兴趣。',
+      praise:'TA对赞美有回应。害羞或反夸=好信号；敷衍=还不够熟。',
+      care:'TA关心你了！行动比甜言蜜语更真实。',
+      flirt:'暧昧时刻！注意是主动推进还是被动接受。',
+      sad:'TA展示脆弱面=信任。好好接住。',
+      happy:'TA分享快乐=你在TA的分享列表里。',
+      chat:'日常聊天。注意是简短应付还是主动延展。',
+      ask:'TA在提问=对你有好奇心。展示有趣的一面。',
+      argue:'有分歧。别慌，认真对话反而说明在意。',
+      bye:'话题要结束。恋恋不舍=想继续聊。'
+    };
+    const sgs=tp.sug[mt]||tp.sug._;
+    return {
+      analysis:(ana[mt]||ana.chat)+'\n\n💡 '+tp.tip.k,
+      suggestions:sgs||[],
+      warning:tp.warn||''
+    };
+  }
+}
+
+const STYLE_PROMPTS={
+  default:'',
+  cute:'语言风格要可爱、萌，多用语气词（比如"呀、呢、喵、呜"），偶尔用表情符号。',
+  mature:'语言风格要成熟稳重，用词严谨，给人可靠的感觉。',
+  humor:'语言风格要幽默风趣，适当玩梗，让对话轻松愉快。',
+  poetic:'语言风格要文艺浪漫，用词优美，带有诗意。',
+  dominant:'语言风格要强势自信，带点霸道总裁范，说话有决断力。'
+};
+
+// ----- AI ENGINE (接入大模型) -----
+class AIEngine extends Engine {
+  constructor(){ super(); this.type='ai'; this._timeout=30000; }
+
+  isReady(){
+    const cfg=loadCfg();
+    return !!(cfg.aiKey && cfg.aiKey.length>5);
+  }
+
+  _getProviderEndpoint(cfg){
+    const endpoints={
+      openai:'https://api.openai.com/v1/chat/completions',
+      anthropic:'https://api.anthropic.com/v1/messages',
+      deepseek:'https://api.deepseek.com/v1/chat/completions',
+      qwen:'https://dashscope.aliyuncs.com/compatible-mode/v1/chat/completions',
+      doubao:'https://ark.cn-beijing.volces.com/api/v3/chat/completions',
+      wenxin:'https://aip.baidubce.com/rpc/2.0/ai_custom/v1/wenxinworkshop/chat/completions',
+      glm:'https://open.bigmodel.cn/api/paas/v4/chat/completions',
+      custom:cfg.aiEndpoint
+    };
+    if(cfg.aiEndpoint && cfg.aiEndpoint.length>0){
+      return cfg.aiEndpoint;
+    }
+    return endpoints[cfg.aiProvider]||endpoints.openai;
+  }
+
+  _getDefaultModel(provider){
+    const defaults={
+      openai:'gpt-4o-mini',
+      anthropic:'claude-sonnet-4-20250514',
+      deepseek:'deepseek-chat',
+      qwen:'qwen-turbo',
+      doubao:'Doubao-seed-1.8k',
+      wenxin:'ernie-4.0-8k',
+      glm:'glm-4-flash',
+      custom:'gpt-4o-mini'
+    };
+    return defaults[provider]||defaults.openai;
+  }
+
+  _buildSystemPrompt(ctx){
+    const myP=P[ctx.myPersonality], taP=P[ctx.taPersonality];
+    const stName=STAGES.find(s=>s.k===ctx.stage)?.n||'';
+    const cfg=loadCfg();
+    const taGenderText=ctx.taGender==='s'?'未公开（你可以根据对话自然表现）':genderName(ctx.taGender);
+    const myGenderText=ctx.myGender==='s'?'未公开':genderName(ctx.myGender);
+    const stylePmt=STYLE_PROMPTS[cfg.aiStyle]||'';
+    
+    let basePmt=`你是一个恋爱角色扮演AI。你要扮演以下角色回复：
+角色性格：${taP.n}（${taP.d}）
+角色性别：${taGenderText}
+对方性格：${myP.n}（${myP.d}）
+对方性别：${myGenderText}
+关系阶段：${stName}
+
+核心要求：
+1. 完全代入角色，用第一人称回复
+2. 回复简短自然，像真人微信聊天（1-3句话）
+3. 符合角色性格特征
+4. 不要加任何旁白/标注/角色名前缀
+5. 如果性别未公开，不要刻意提及性别，自然对话即可
+
+${stylePmt}
+
+${cfg.aiSysPrompt?'\n用户补充指令：'+cfg.aiSysPrompt:''}`;
+    return basePmt;
+  }
+
+  _buildAdvisorPrompt(ctx){
+    const taP=P[ctx.taPersonality];
+    const stName=STAGES.find(s=>s.k===ctx.stage)?.n||'';
+    return `你是专业的恋爱军师，根据对话内容分析局势并给出实用建议。
+对方性格：${taP.n}（${taP.d}）
+关系阶段：${stName}
+
+请严格用JSON格式返回，不要任何其他内容：
+{"analysis":"局势分析（2-3句，要具体）","suggestions":["推荐回复1","推荐回复2","推荐回复3"],"warning":"避雷提示（1-2句，如果没有则为空字符串）"}`;
+  }
+
+  async _callAPI(messages){
+    const cfg=loadCfg();
+    const endpoint=this._getProviderEndpoint(cfg);
+    const model=cfg.aiModel||this._getDefaultModel(cfg.aiProvider);
+    const temperature=cfg.aiTemperature!==undefined?cfg.aiTemperature:0.8;
+    const timeout=(cfg.aiTimeout||30)*1000;
+    const useFallback=cfg.aiUseFallback!==false;
+
+    const controller=new AbortController();
+    const timeoutId=setTimeout(()=>controller.abort(),timeout);
+
+    try{
+      // Anthropic 用不同格式
+      if(cfg.aiProvider==='anthropic'){
+        const sys=messages.find(m=>m.role==='system')?.content||'';
+        const msgs=messages.filter(m=>m.role!=='system');
+        const resp=await fetch(endpoint,{
+          method:'POST',
+          signal:controller.signal,
+          headers:{'Content-Type':'application/json','x-api-key':cfg.aiKey,'anthropic-version':'2023-06-01'},
+          body:JSON.stringify({model,max_tokens:800,system:sys,messages:msgs})
+        });
+        clearTimeout(timeoutId);
+        if(!resp.ok){
+          const errText=await resp.text();
+          throw new Error(`API错误: ${resp.status} ${errText}`);
+        }
+        const data=await resp.json();
+        return data.content?.[0]?.text||'';
+      }
+
+      // OpenAI compatible (包括国内各大模型)
+      let headers={
+        'Content-Type':'application/json',
+        'Authorization':'Bearer '+cfg.aiKey
+      };
+      
+      // 特殊处理百度文心一言，可能需要不同的认证方式
+      if(cfg.aiProvider==='wenxin' && !cfg.aiEndpoint){
+        headers={
+          'Content-Type':'application/json'
+        };
+      }
+
+      const body={
+        model,
+        messages,
+        max_tokens:800,
+        temperature:temperature
+      };
+
+      const resp=await fetch(endpoint,{
+        method:'POST',
+        signal:controller.signal,
+        headers,
+        body:JSON.stringify(body)
+      });
+      clearTimeout(timeoutId);
+      
+      if(!resp.ok){
+        const errText=await resp.text();
+        throw new Error(`API错误: ${resp.status} ${errText}`);
+      }
+      
+      const data=await resp.json();
+      return data.choices?.[0]?.message?.content||data.result||'';
+    }catch(e){
+      clearTimeout(timeoutId);
+      if(useFallback){
+        console.warn('AI API调用失败，降级到本地规则引擎:',e.message);
+        return null;
+      }
+      throw e;
+    }
+  }
+
+  async reply(ctx){
+    const sysPmt=this._buildSystemPrompt(ctx);
+    const messages=[{role:'system',content:sysPmt}];
+    // 加入历史
+    (ctx.history||[]).slice(-10).forEach(h=>{
+      messages.push({role:h.who==='me'?'user':'assistant',content:h.text});
+    });
+    messages.push({role:'user',content:ctx.lastMsg});
+    const text=await this._callAPI(messages);
+    if(text===null){
+      // 降级到本地规则引擎
+      return new LocalEngine().reply(ctx);
+    }
+    return {text:text.trim(), msgType:classify(text)};
+  }
+
+  async advise(ctx){
+    const advPmt=this._buildAdvisorPrompt(ctx);
+    const messages=[
+      {role:'system',content:advPmt},
+      {role:'user',content:`对方最新回复："${ctx.lastTaMsg}"\n最近对话：${JSON.stringify((ctx.history||[]).slice(-6).map(h=>h.who+':'+h.text))}`}
+    ];
+    try{
+      const raw=await this._callAPI(messages);
+      if(raw===null){
+        return new LocalEngine().advise(ctx);
+      }
+      const json=JSON.parse(raw.replace(/```json?\n?/g,'').replace(/```/g,''));
+      return {analysis:json.analysis||'',suggestions:json.suggestions||[],warning:json.warning||''};
+    }catch(e){
+      return new LocalEngine().advise(ctx);
+    }
+  }
+
+  async simulate(scenarioKey, ctx){
+    // AI 模拟：让大模型生成完整对话
+    const sc=SCENARIOS[scenarioKey];
+    if(!sc) return [];
+    const myP=P[ctx.myPersonality], taP=P[ctx.taPersonality];
+    const stName=STAGES.find(s=>s.k===ctx.stage)?.n||'';
+    const myGenderText=ctx.myGender==='s'?'未公开':genderName(ctx.myGender);
+    const taGenderText=ctx.taGender==='s'?'未公开':genderName(ctx.taGender);
+    const prompt=`生成一段10轮恋爱对话，场景：${scenarioKey}
+A：性别${myGenderText}，性格${myP.n}
+B：性别${taGenderText}，性格${taP.n}
+关系阶段：${stName}
+
+要求JSON数组格式：[{"who":"me"或"ta","text":"对话内容","comment":"军师点评（15字以内）"},...]
+只输出JSON，不要其他内容。如果性别未公开，不要刻意提及性别，自然对话即可。`;
+    try{
+      const raw=await this._callAPI([{role:'user',content:prompt}]);
+      if(raw===null){
+        return new LocalEngine().simulate(scenarioKey,ctx);
+      }
+      return JSON.parse(raw.replace(/```json?\n?/g,'').replace(/```/g,''));
+    }catch(e){
+      return new LocalEngine().simulate(scenarioKey,ctx);
+    }
+  }
+}
+
+// 远程匹配状态枚举
+const REMOTE_STATE={
+  IDLE:'idle',
+  CONNECTING:'connecting',
+  MATCHING:'matching',
+  MATCHED:'matched',
+  CHATTING:'chatting',
+  DISCONNECTED:'disconnected',
+  ERROR:'error'
+};
+
+// ----- REMOTE ENGINE (远程匹配真人/虚拟人) -----
+class RemoteEngine extends Engine {
+  constructor(){ 
+    super(); 
+    this.type='remote'; 
+    this.ws=null; 
+    this.state=REMOTE_STATE.IDLE;
+    this.matchedPartner=null;
+    this._messageQueue=[];
+    this._pendingReply=null;
+    this._matchTimeoutId=null;
+  }
+
+  isReady(){
+    const cfg=loadCfg();
+    return !!(cfg.remoteUrl && cfg.remoteUrl.length>0);
+  }
+
+  async init(config){
+    super.init(config);
+    const cfg=loadCfg();
+    
+    if(!cfg.remoteUrl){
+      throw new Error('请先在设置中配置远程匹配服务URL');
+    }
+
+    this.state=REMOTE_STATE.CONNECTING;
+    
+    try{
+      await this._connect(cfg, config);
+    }catch(e){
+      this.state=REMOTE_STATE.ERROR;
+      console.error('远程匹配连接失败:',e);
+      throw e;
+    }
+  }
+
+  async _connect(cfg, config){
+    return new Promise((resolve,reject)=>{
+      try{
+        this.ws=new WebSocket(cfg.remoteUrl);
+        
+        this.ws.onopen=()=>{
+          this.state=REMOTE_STATE.MATCHING;
+          
+          const persona={
+            gender:config.myGender,
+            personality:config.myPersonality,
+            stage:config.stage,
+            genderName:genderName(config.myGender),
+            personalityName:P[config.myPersonality]?.n||config.myPersonality
+          };
+          
+          if(cfg.remoteAnonymous!==false){
+            delete persona.gender;
+            delete persona.genderName;
+          }
+          
+          this.ws.send(JSON.stringify({
+            type:'match',
+            persona,
+            preference:cfg.remotePref||'personality',
+            genderPref:cfg.remoteGenderPref||'any',
+            nick:cfg.remoteNick||'匿名用户',
+            quickMatch:cfg.remoteQuickChat!==false
+          }));
+          
+          const timeout=(cfg.remoteTimeout||60)*1000;
+          this._matchTimeoutId=setTimeout(()=>{
+            if(this.state===REMOTE_STATE.MATCHING){
+              this._handleMatchTimeout();
+            }
+          },timeout);
+          
+          resolve();
+        };
+        
+        this.ws.onmessage=(e)=>{
+          try{
+            const msg=JSON.parse(e.data);
+            this._handleMessage(msg);
+          }catch(err){
+            console.error('解析远程消息失败:',err);
+          }
+        };
+        
+        this.ws.onerror=(e)=>{
+          this.state=REMOTE_STATE.ERROR;
+          console.error('WebSocket错误:',e);
+          reject(new Error('连接失败'));
+        };
+        
+        this.ws.onclose=()=>{
+          this.state=REMOTE_STATE.DISCONNECTED;
+          if(this._matchTimeoutId){
+            clearTimeout(this._matchTimeoutId);
+          }
+        };
+        
+      }catch(e){
+        reject(e);
+      }
+    });
+  }
+
+  _handleMessage(msg){
+    switch(msg.type){
+      case 'matching':
+        this.state=REMOTE_STATE.MATCHING;
+        console.log('正在匹配中...',msg.info);
+        break;
+        
+      case 'matched':
+        this.state=REMOTE_STATE.MATCHED;
+        this.matchedPartner=msg.partner;
+        if(this._matchTimeoutId){
+          clearTimeout(this._matchTimeoutId);
+        }
+        console.log('匹配成功:',this.matchedPartner);
+        break;
+        
+      case 'message':
+        if(this._pendingReply){
+          this._pendingReply({
+            text:msg.text,
+            msgType:classify(msg.text)
+          });
+          this._pendingReply=null;
+        }else{
+          this._messageQueue.push(msg);
+        }
+        break;
+        
+      case 'advise':
+        if(this._onAdvise){
+          this._onAdvise(msg);
+        }
+        break;
+        
+      case 'system':
+        console.log('系统消息:',msg.text);
+        break;
+        
+      case 'error':
+        console.error('远程服务错误:',msg.text);
+        this.state=REMOTE_STATE.ERROR;
+        break;
+        
+      case 'partner_left':
+        this.state=REMOTE_STATE.DISCONNECTED;
+        this.matchedPartner=null;
+        console.log('对方已离开');
+        break;
+    }
+  }
+
+  _handleMatchTimeout(){
+    if(this.ws && this.state===REMOTE_STATE.MATCHING){
+      this.ws.send(JSON.stringify({type:'cancel_match'}));
+    }
+    this.state=REMOTE_STATE.DISCONNECTED;
+    console.log('匹配超时');
+  }
+
+  async reply(ctx){
+    if(!this.ws || this.state===REMOTE_STATE.DISCONNECTED || this.state===REMOTE_STATE.ERROR){
+      return new LocalEngine().reply(ctx);
+    }
+
+    if(this.state===REMOTE_STATE.MATCHING){
+      await this._waitForMatch();
+    }
+
+    if(this.state!==REMOTE_STATE.MATCHED && this.state!==REMOTE_STATE.CHATTING){
+      return new LocalEngine().reply(ctx);
+    }
+
+    this.state=REMOTE_STATE.CHATTING;
+    this.ws.send(JSON.stringify({
+      type:'message',
+      text:ctx.lastMsg,
+      timestamp:Date.now()
+    }));
+
+    if(this._messageQueue.length>0){
+      const queued=this._messageQueue.shift();
+      return {text:queued.text, msgType:classify(queued.text)};
+    }
+
+    return new Promise((resolve,reject)=>{
+      const timeout=60000;
+      const timeoutId=setTimeout(()=>{
+        this._pendingReply=null;
+        resolve(new LocalEngine().reply(ctx));
+      },timeout);
+      
+      this._pendingReply=(result)=>{
+        clearTimeout(timeoutId);
+        resolve(result);
+      };
+    });
+  }
+
+  async _waitForMatch(){
+    return new Promise((resolve)=>{
+      const checkInterval=setInterval(()=>{
+        if(this.state===REMOTE_STATE.MATCHED || this.state===REMOTE_STATE.CHATTING){
+          clearInterval(checkInterval);
+          resolve(true);
+        }else if(this.state===REMOTE_STATE.DISCONNECTED || this.state===REMOTE_STATE.ERROR){
+          clearInterval(checkInterval);
+          resolve(false);
+        }
+      },500);
+    });
+  }
+
+  async advise(ctx){
+    return new LocalEngine().advise(ctx);
+  }
+
+  async simulate(scenarioKey, ctx){
+    return new LocalEngine().simulate(scenarioKey,ctx);
+  }
+
+  async destroy(){
+    if(this._matchTimeoutId){
+      clearTimeout(this._matchTimeoutId);
+    }
+    if(this.ws){
+      try{
+        this.ws.send(JSON.stringify({type:'leave'}));
+      }catch(e){}
+      this.ws.close();
+      this.ws=null;
+    }
+    this.state=REMOTE_STATE.IDLE;
+    this.matchedPartner=null;
+    this._messageQueue=[];
+    this._pendingReply=null;
+  }
+}
+
+// ===== ENGINE FACTORY =====
+function createEngine(type){
+  switch(type){
+    case 'ai': return new AIEngine();
+    case 'remote': return new RemoteEngine();
+    default: return new LocalEngine();
+  }
+}
+
+let engine = new LocalEngine();
+
+// =====================================================
+//  PERSONALITY DATA
+// =====================================================
+const P={
+  gentle:{n:'温柔体贴',e:'🌸',d:'善解人意，细心关怀',
+    open:['在忙吗？突然想找你聊聊','今天天气好好呀～','刚看到个可爱的东西想到你了','你今天过得怎样呀？'],
+    r:{hi:['嗯嗯你好呀～','嘿嘿你来啦','你好呀，今天怎样？'],ask:['嗯…让我想想','这个呀，我觉得还不错','你问这个好可爱'],praise:['哎呀会害羞的','真的吗？谢谢呀','被你夸了好开心～'],care:['你也要照顾好自己哦','嗯嗯有事随时找我','希望你天天开开心心'],flirt:['你怎么突然说这个…','脸红了啦','你是不是对谁都这样～'],sad:['怎么啦？跟我说说','抱抱你，会好的','我在呢，可以找我倾诉'],happy:['看你开心我也开心','太好了！替你高兴','必须庆祝呀'],chat:['今天做了什么呀？','吃饭了吗？','变天了记得加衣服哦'],argue:['你说的也有道理','我想法不一样，但尊重你','换个角度想想？'],bye:['好好休息哦晚安～','下次再聊啦','拜拜注意安全呀']},
+    tip:{s:'温柔型最吃真诚关心和细节记忆',w:'太直接会让TA不适',k:'记住TA说过的小事，下次提起，杀伤力巨大'},
+    sug:{hi:['今天过得怎样呀？想听你说说','嘿！刚在想你你就出现了','在呢，正好有空聊'],flirt:['其实…我挺喜欢和你聊天的','你这样的人谁能不心动','以后想多了解你，可以吗？'],_:['最近有什么开心的事吗？','明天天气不错有啥安排？','发现一个你可能喜欢的东西']},
+    warn:'❌ 别开过分的玩笑\n❌ 不要敷衍回复，TA感受得到'},
+  cool:{n:'高冷学霸',e:'🧊',d:'话少精准，偶尔冷幽默',
+    open:['在？','看到篇文章挺有意思','有个问题想讨论','最近看什么书？'],
+    r:{hi:['嗯','在','你好'],ask:['要看情况','客观来说还行','你可以这样理解'],praise:['还行吧','…谢了','你没见过更厉害的'],care:['注意休息','别熬夜','水喝够了吗'],flirt:['？','你今天怎么了','说人话'],sad:['发生什么了','说来听听','需要我做什么'],happy:['不错','恭喜','值得高兴'],chat:['在学习','看了个纪录片还行','在研究一个东西'],argue:['逻辑不成立','有数据支撑吗','未必'],bye:['嗯早点睡','行下次聊','拜']},
+    tip:{s:'高冷型主动发消息就是在意',w:'太黏会让TA窒息',k:'展示有趣/有深度的一面，TA会主动靠近'},
+    sug:{hi:['在研究什么呢？','最近有好书推荐吗？','你怎么看xxx？'],flirt:['你认真的样子特别好看','有些话一般不说…但对你想说','要不要多认识彼此？'],_:['平时怎么看待xx问题？','推荐你一个播客','最近在想一个事']},
+    warn:'❌ 不要连续消息轰炸\n❌ 别说没信息量的废话'},
+  funny:{n:'幽默搞怪',e:'😜',d:'段子手，气氛担当',
+    open:['你猜怎么着！','刚发生一件离谱的事','无聊到数头发了你在干嘛','紧急播报：我想你了（不是）'],
+    r:{hi:['哟！想我了？','你终于来找我了','报！有何指示？'],ask:['问得好，下一个（不是','让本大师算算…','你问住我了等我百度'],praise:['必须的，全村的希望','再多说几句','哈哈被你发现了'],care:['谢谢老板，工资啥时涨？','你是不是对所有人都这么好','行了知道你关心我了'],flirt:['你在撩我？我可是正经人','这是表白吗？我要截图','别，我经不起这攻击'],sad:['谁欺负你了？我去揍TA','难过就吃好的，我请（画饼','来给你表演个节目'],happy:['冲！今天你最帅/美','必须发朋友圈','请客！'],chat:['刷了三小时手机罪恶感爆棚','在思考人生（其实发呆','废物本废但快乐着'],argue:['好好好你说的对','要不打一架？输的请吃饭','你说得对但我不听'],bye:['走了？那我找别人了（开玩笑','拜拜梦里见','记得想我']},
+    tip:{s:'幽默型靠反差感圈粉',w:'24h搞笑会让TA觉得不靠谱',k:'在TA需要的时候突然认真，反差=心动'},
+    sug:{hi:['你终于上线了等得花都谢了','你猜我遇到啥离谱事了','报告！请求聊天'],flirt:['如果我说想你了你信吗？','你再这样我要当真了','保守估计有一点点喜欢你'],_:['来玩个游戏猜我在想啥','给你看个搞笑的','今日灵魂拷问：xxx']},
+    warn:'❌ 别在TA认真时还玩梗\n❌ 分清调侃和冒犯的边界'},
+  artistic:{n:'文艺浪漫',e:'🌙',d:'诗意表达，浪漫至上',
+    open:['今晚月亮很好看，想分享给你','刚听到一首歌让我想到你','路过一家书店随便翻了翻','下雨了，适合发呆'],
+    r:{hi:['嗨，今天的风很温柔','你来了，像午后的咖啡','有没有遇到美好的事？'],ask:['这个问题很有意思…','让我想想怎么说','每个人答案不同吧'],praise:['你的话像首小诗','谢谢，想记下来','心里暖暖的'],care:['谢谢你的温柔','有人关心真好','你总是这么细心'],flirt:['你在靠近我的心','有些话说出来就变了…但想说','像春天的第一缕风'],sad:['难过时看看天空，会放晴的','陪你坐会，不说话也行','低谷是在蓄力'],happy:['你笑起来像阳光洒在海面','快乐会传染，我也开心了','值得被记住'],chat:['今天看了部老电影','写了几行字删删改改','傍晚散步拍了张落日'],argue:['每个人的世界都不一样','或许换个角度…','理解你，只是感受不同'],bye:['晚安，愿好梦','像一首歌的间奏','明天见，梦里有星星']},
+    tip:{s:'文艺型吃共鸣感和仪式感',w:'太接地气反而无趣',k:'分享音乐/电影/书，建立精神世界'},
+    sug:{hi:['今晚月色真好想分享给你','刚听到一首歌想到你','路过一个很美的地方可惜你不在'],flirt:['有些人看一眼就知道会走进心里','想走进你的故事里','这种感觉叫心动对吗？'],_:['最近看了什么好电影？','有没有反复听的歌？','用一个颜色形容今天你选什么？']},
+    warn:'❌ 不要说粗话\n❌ 别说「你想太多了」'},
+  dominant:{n:'霸道自信',e:'👔',d:'主导型，说一不二',
+    open:['晚上有空吗？我定了个地方','你在哪？','给你看个东西','今天我来安排'],
+    r:{hi:['你来了','嗯怎么了','说'],ask:['不用想那么多','别纠结就这样','我帮你决定'],praise:['那当然','还行吧','你也不差'],care:['按时吃饭别让我操心','冷了穿我外套','早点回家'],flirt:['你在招惹我？','想好了？盯上就跑不了','继续说我喜欢听'],sad:['谁的问题告诉我','别哭了我帮你','你只管难过其他我来'],happy:['值得高兴，请你吃饭','不错继续保持','看你开心就行'],chat:['刚开完会','在健身房','今天搞定一件大事'],argue:['这事听我的','你想多了','不接受反驳'],bye:['早点睡','回去注意安全','嗯明天见']},
+    tip:{s:'霸总表面强势内心柔软',w:'硬碰硬适得其反',k:'偶尔撒娇/示弱看TA破防'},
+    sug:{hi:['来了？我等你好一会了','在忙什么说来听听','你今天看起来不错'],flirt:['考虑一下跟我走？','很少对人说这话','你让我想保护你'],_:['周末我安排了你负责出现','有个地方想带你去','你的事我来处理']},
+    warn:'❌ 别跟TA硬碰硬\n❌ 别质疑TA的能力'},
+  sporty:{n:'运动阳光',e:'☀️',d:'活力满满，行动派',
+    open:['天气绝了出去跑步吗？','刚打完球爽！你在干嘛','周末爬山吗？','发现一家新店一起探店！'],
+    r:{hi:['嘿！你好呀！','来了来了！','哟！好久不见！'],ask:['想那么多干嘛试了就知道','我不太懂哈哈但可以一起研究','我觉得还行'],praise:['哈哈谢谢你也超棒！','过奖一起加油！','真的吗？开心！'],care:['你也多运动！','运动治愈一切','乖好好休息！'],flirt:['欸你说这话心跳加速了','你故意的吧！','搞得我不好意思了'],sad:['走！带你出去转转','难过就跑步跑完啥都想开','没事明天又是新的一天！'],happy:['冲冲冲！太棒了！','必须庆祝！','Let\'s go!!!'],chat:['今天跑了5公里拉满','刚游完泳饿死','在看比赛太刺激了'],argue:['嗯好像也有道理？','哈哈想的不一样但都行','好吧你说了算'],bye:['拜拜明天见！','明天又是活力满满一天','走啦梦里打球']},
+    tip:{s:'阳光型喜欢一起做事',w:'总聊天不见面热度会降',k:'多约线下活动，运动约会最佳'},
+    sug:{hi:['走走走出去逛逛！','天气绝了在家亏大了','最近运动了吗一起啊'],flirt:['和你在一起心跳比跑步还快','你是多巴胺制造机','要不要一起看日出？'],_:['周末爬山走起！','发现一条美丽跑步路线','最近学了新运动要试吗']},
+    warn:'❌ 不要太宅太丧\n❌ 别总放鸽子'},
+  intellectual:{n:'知性优雅',e:'📚',d:'有深度，爱思考',
+    open:['最近看一本书有个观点挺有意思','你有没有想过一个问题…','看到一个新闻想听你看法','推荐你一部纪录片'],
+    r:{hi:['你好最近怎样？','嗨在忙什么？','好久没聊了'],ask:['这个问题很好我觉得还行','可以从几个维度看','你的想法是？'],praise:['谢谢你的认可','你也很有想法','高兴遇到懂欣赏的人'],care:['谢谢也照顾好自己','注意劳逸结合','有需要随时说'],flirt:['这话我得想想什么意思','和你聊天总有不一样的感觉','在暗示什么？'],sad:['想聊聊吗？我可以听','低谷期很正常','需要独处还是陪伴？'],happy:['真好值得开心','恭喜努力有了回报','分享喜悦我也开心'],chat:['今天读了半本书收获大','在写东西灵感断续','去了个展览体验很好'],argue:['有道理不过我有不同看法','可以保留各自观点','可以再讨论'],bye:['晚安好梦','先不打扰了','下次继续聊']},
+    tip:{s:'知性型看重精神共鸣',w:'只聊浅层话题会失去兴趣',k:'准备有深度的话题展示思考力'},
+    sug:{hi:['最近在思考什么？','有个观点想跟你讨论','最近看了什么好内容？'],flirt:['灵魂共鸣原来是真的','想更多了解你的内心','想和你一起探索很多事'],_:['你怎么看待xxx？','推荐你一个TED','最近对xx很感兴趣']},
+    warn:'❌ 别装懂不懂的\n❌ 别在TA分享观点时敷衍'},
+  tsundere:{n:'傲娇别扭',e:'😤',d:'口是心非，外冷内热',
+    open:['喂你今天没来烦我诶','这个东西…反正我不要了给你','无聊死了不是想找你聊天','刚好路过你说的那家店顺便拍了张照'],
+    r:{hi:['哦你来了','嗯怎么了','有事？'],ask:['为什么要告诉你…算了','你自己不会查？好吧…','这都不知道？'],praise:['你少来这套','才不是开心呢','眼光倒不差'],care:['不用你管…不过谢了','我自己会照顾自己','多管闲事…但谢谢'],flirt:['你在说什么呢！','别开玩笑！','你脑子有问题吧（脸红）'],sad:['又不是大事…别难过了','给这个不是特意买的顺手','谁让你哭了？我揍TA'],happy:['有什么好高兴…好吧恭喜','看把你嘚瑟的','还行吧（偷偷开心）'],chat:['关你什么事…在看剧','一般般没什么特别','不告诉你（其实想说）'],argue:['你说的才不对','哼随你怎么想','才不跟你吵'],bye:['走吧…明天记得来找我','快走别磨蹭','随便…晚安']},
+    tip:{s:'傲娇型说和做永远相反',w:'真冷落TA会真生气',k:'适度逗TA看口是心非就赢了'},
+    sug:{hi:['你怎么才来','我可没在等你','来了啊…算你有良心'],flirt:['才不是喜欢你！只是觉得还行','你想多了…不过想多就多吧','一定要我说的话…不说'],_:['今天干嘛了？不是关心你','给你看个东西反正我不要了','无聊过来陪我不是求你']},
+    warn:'❌ 别把口是心非当真\n❌ 别说「你不是不在乎吗」'}
+};
+
+const STAGES=[
+  {k:'crush',n:'👀 暗恋中'},
+  {k:'strangers',n:'🤝 刚认识'},
+  {k:'pursue',n:'🏃 追求中'},
+  {k:'flirting',n:'💗 暧昧期'},
+  {k:'dating_early',n:'🌱 约会初期'},
+  {k:'dating',n:'🔥 热恋期'},
+  {k:'stable',n:'🏡 稳定期'},
+  {k:'longterm',n:'👨‍👩‍👧 老夫老妻'},
+  {k:'conflict',n:'❄️ 冷战期'},
+  {k:'crisis',n:'💔 危机期'},
+  {k:'married',n:'💍 已婚'},
+  {k:'breakup',n:'🔄 分手后'}
+];
+
+const SCENARIOS={
+  first:[{w:'me',t:'hi',c:'第一印象很重要'},{w:'ta',t:'hi',c:'回应透露开放程度'},{w:'me',t:'ask',c:'找共同话题'},{w:'ta',t:'chat',c:'愿意分享是好信号'},{w:'me',t:'praise',c:'适当赞美别夸张'},{w:'ta',t:'praise',c:'看TA怎么接赞美'},{w:'me',t:'chat',c:'分享生活制造交集'},{w:'ta',t:'ask',c:'TA提问说明有兴趣'},{w:'me',t:'care',c:'展现关心但别过度'},{w:'ta',t:'bye',c:'结束态度决定下次概率'}],
+  daily:[{w:'me',t:'hi',c:'打招呼方式体现亲密度'},{w:'ta',t:'hi',c:'热情度是信号'},{w:'me',t:'chat',c:'分享日常拉近距离'},{w:'ta',t:'chat',c:'TA也分享就对了'},{w:'me',t:'care',c:'关心TA日常'},{w:'ta',t:'happy',c:'被关心后的反应'},{w:'me',t:'ask',c:'保持好奇心'},{w:'ta',t:'ask',c:'双向互动很健康'},{w:'me',t:'happy',c:'传递积极情绪'},{w:'ta',t:'bye',c:'谁先结束话题'}],
+  flirt:[{w:'me',t:'hi',c:'暧昧期开场带点暗示'},{w:'ta',t:'hi',c:'回应温度很关键'},{w:'me',t:'flirt',c:'轻度试探观察反应'},{w:'ta',t:'flirt',c:'反应决定推进空间'},{w:'me',t:'praise',c:'夸赞升级更走心'},{w:'ta',t:'praise',c:'害羞还是回避？'},{w:'me',t:'flirt',c:'再进一步'},{w:'ta',t:'care',c:'TA开始关心→好信号'},{w:'me',t:'care',c:'表达在意'},{w:'ta',t:'flirt',c:'TA也暧昧就稳了'}],
+  date:[{w:'me',t:'hi',c:'铺垫很重要'},{w:'ta',t:'hi',c:'先看心情'},{w:'me',t:'chat',c:'先聊日常做铺垫'},{w:'ta',t:'chat',c:'找切入点'},{w:'me',t:'ask',c:'自然引出约会话题'},{w:'ta',t:'ask',c:'看态度'},{w:'me',t:'flirt',c:'提出邀请'},{w:'ta',t:'happy',c:'TA的回应'},{w:'me',t:'happy',c:'确认'},{w:'ta',t:'care',c:'约会前的关心'}],
+  fight:[{w:'me',t:'hi',c:'冷战后先开口需要勇气'},{w:'ta',t:'argue',c:'TA可能还有情绪'},{w:'me',t:'sad',c:'表达感受而非指责'},{w:'ta',t:'sad',c:'TA也有委屈'},{w:'me',t:'care',c:'用关心化解矛盾'},{w:'ta',t:'argue',c:'还在犹豫'},{w:'me',t:'praise',c:'提起TA的好'},{w:'ta',t:'care',c:'心防开始松动'},{w:'me',t:'happy',c:'展望未来'},{w:'ta',t:'happy',c:'和好信号'}],
+  night:[{w:'me',t:'hi',c:'深夜聊天自带亲密感'},{w:'ta',t:'hi',c:'愿意深夜陪聊很说明问题'},{w:'me',t:'ask',c:'深夜适合聊深层话题'},{w:'ta',t:'chat',c:'分享内心世界'},{w:'me',t:'sad',c:'展示脆弱是信任'},{w:'ta',t:'care',c:'看TA怎么对待脆弱'},{w:'me',t:'flirt',c:'夜晚容易冲动…'},{w:'ta',t:'flirt',c:'深夜更坦诚'},{w:'me',t:'care',c:'关心作息'},{w:'ta',t:'bye',c:'谁舍不得先说再见'}],
+  confess:[{w:'me',t:'hi',c:'表白前稳住心态'},{w:'ta',t:'hi',c:'TA今天的状态'},{w:'me',t:'chat',c:'正常聊天做铺垫'},{w:'ta',t:'chat',c:'制造自然对话流'},{w:'me',t:'praise',c:'从赞美开始'},{w:'ta',t:'praise',c:'反应很关键'},{w:'me',t:'flirt',c:'直接表达心意'},{w:'ta',t:'flirt',c:'回应决定一切'},{w:'me',t:'care',c:'无论结果都表达尊重'},{w:'ta',t:'happy',c:'看最终结局'}]
+};
+const CONFESS={gentle:'其实…我想了很久。我真的很喜欢你，想好好陪在你身边。',cool:'我不太会说好听的话。但有个事实：我喜欢你。',funny:'编了一百个段子铺垫，到这刻全忘了。总之我喜欢你，不是开玩笑。',artistic:'如果人生是电影，遇到你是最好的情节。我喜欢你。',dominant:'我喜欢你，想好了。你不用马上回答，但你应该知道。',sporty:'不兜圈子了——我喜欢你！超级喜欢！',intellectual:'思考了很久这种感觉是什么。结论：我喜欢你，很确定。',tsundere:'才不是要表白…好吧，我好像有一点喜欢你…只一点！'};
+const CONFESS_R={gentle:'我…其实也偷偷喜欢你好久了。能被你喜欢好幸福～',cool:'嗯我知道了。…其实我也不讨厌你。好吧，我也喜欢你。',funny:'你没逗我？！好吧…扯平了因为我也是。',artistic:'这一刻像慢镜头。谢谢你的勇敢…我也喜欢你。',dominant:'终于说了。等这句话很久了。从今天起你是我的了。',sporty:'真的吗！我也喜欢你啊！天啊心跳好快！',intellectual:'最有价值的信息。我的回答是…我也喜欢你。',tsundere:'谁要你喜欢了！…不过我没说不喜欢你。'};
+const DATE_INV={gentle:'周末有时间吗？想约你出来走走吃顿饭～',cool:'周末有个不错的展。一起？',funny:'本市最佳导游诚邀您周末出游，包吃不包住',artistic:'周末有场展览想和你一起感受',dominant:'周末留出来。我安排了地方，到时接你。',sporty:'周末一起骑行/爬山吗？会很好玩！',intellectual:'有家很特别的书店想带你去，周末方便吗？',tsundere:'周末你没事的话…陪我去个地方，不是约你'};
+const DATE_R={gentle:'好呀！说定了～',cool:'行，发时间地点。',funny:'答应但你请客啊！开玩笑走起！',artistic:'好浪漫～ 很期待！',dominant:'可以。下次我来安排。',sporty:'走走走！太期待了！',intellectual:'好的，正好有话想聊。',tsundere:'又不是只能跟你去…好吧正好有空'};
+
+// =====================================================
+//  STATE & CONFIG
+// =====================================================
+let S={mg:'m',mp:'gentle',tg:'f',tp:'gentle',stage:'strangers',eng:'local',hist:[]};
+function genderName(g){if(g==='m')return '男';if(g==='f')return '女';return '保密';}
+
+function loadCfg(){
+  try{return JSON.parse(localStorage.getItem('loveStratCfg'))||{};}catch(e){return {};}
+}
+function saveCfgData(d){
+  localStorage.setItem('loveStratCfg',JSON.stringify(d));
+}
+
+// ===== HELPERS =====
+function pick(a){return a[Math.floor(Math.random()*a.length)];}
+function esc(t){const d=document.createElement('div');d.textContent=t;return d.innerHTML;}
+function gi(g){if(g==='m')return '👦';if(g==='f')return '👧';return '🔒';}
+function classify(text){
+  const t=(text||'').toLowerCase();
+  const m={hi:[/^(嗨|嘿|你好|hi|hello|hey|在吗|在不|早|晚上好|下午好)/],praise:[/(好看|漂亮|帅|厉害|棒|优秀|可爱|有才|牛|不错|美|赞)/],care:[/(注意|照顾|休息|保重|吃饭|身体|冷|热|别太|辛苦|累|加衣|早睡)/],flirt:[/(想你|喜欢|心动|约会|在一起|暧昧|亲|抱|牵手|暗恋|表白|撩|爱你)/],sad:[/(难过|伤心|哭|不开心|烦|郁闷|焦虑|失落|难受|累了|崩溃|emo)/],happy:[/(开心|高兴|太好了|哈哈|赢了|成功|恭喜|庆祝|爽|激动)/],ask:[/(？|\?|吗|呢|怎么|什么|为什么|哪|几|多少|如何|是不是)/],argue:[/(不同意|不对|不是|你错|才不|反对|但是|可是)/],bye:[/(再见|拜拜|晚安|bye|睡了|走了|下次|先这样)/]};
+  for(const[k,rs] of Object.entries(m)){if(rs.some(r=>r.test(t)))return k;}
+  return 'chat';
+}
+
+// ===== INIT =====
+function initSetup(){
+  ['mp','tp'].forEach(id=>{
+    const el=document.getElementById(id);el.innerHTML='';
+    Object.entries(P).forEach(([k,v])=>{
+      const b=document.createElement('button');b.dataset.v=k;
+      if(k==='gentle')b.className='on';
+      b.innerHTML=`${v.e} <span class="pn">${v.n}</span><span class="pd">${v.d}</span>`;
+      b.onclick=()=>{el.querySelectorAll('button').forEach(x=>x.classList.remove('on'));b.classList.add('on');S[id]=k;};
+      el.appendChild(b);
+    });
+  });
+  const sr=document.getElementById('sr');sr.innerHTML='';
+  STAGES.forEach(s=>{
+    const b=document.createElement('button');b.textContent=s.n;b.dataset.v=s.k;
+    if(s.k==='strangers')b.className='on';
+    b.onclick=()=>{sr.querySelectorAll('button').forEach(x=>x.classList.remove('on'));b.classList.add('on');S.stage=s.k;};
+    sr.appendChild(b);
+  });
+  ['mg','tg'].forEach(id=>{
+    document.getElementById(id).querySelectorAll('button').forEach(b=>{
+      b.onclick=()=>{document.getElementById(id).querySelectorAll('button').forEach(x=>x.classList.remove('on'));b.classList.add('on');S[id]=b.dataset.v;};
+    });
+  });
+  // Engine toggle
+  document.getElementById('etog').querySelectorAll('button').forEach(b=>{
+    b.onclick=()=>{
+      const v=b.dataset.v;
+      if(v!=='local'){
+        const eng=createEngine(v);
+        if(!eng.isReady()){
+          alert(v==='ai'?'请先在设置中填写 API Key':'请先在设置中填写匹配服务 URL');
+          openCfg();
+          return;
+        }
+      }
+      document.getElementById('etog').querySelectorAll('button').forEach(x=>x.classList.remove('on'));
+      b.classList.add('on');
+      S.eng=v;
+      engine=createEngine(v);
+    };
+  });
+  // Load saved config
+  const cfg=loadCfg();
+  if(cfg.aiKey)document.getElementById('aiKey').value=cfg.aiKey;
+  if(cfg.aiProvider)document.getElementById('aiProvider').value=cfg.aiProvider;
+  if(cfg.aiEndpoint)document.getElementById('aiEndpoint').value=cfg.aiEndpoint;
+  if(cfg.aiModel)document.getElementById('aiModel').value=cfg.aiModel;
+  if(cfg.aiTimeout)document.getElementById('aiTimeout').value=cfg.aiTimeout;
+  if(cfg.aiTemperature!==undefined)document.getElementById('aiTemperature').value=cfg.aiTemperature;
+  if(cfg.aiStyle)document.getElementById('aiStyle').value=cfg.aiStyle;
+  if(cfg.aiSysPrompt)document.getElementById('aiSysPrompt').value=cfg.aiSysPrompt;
+  if(cfg.aiUseFallback!==undefined)document.getElementById('aiUseFallback').checked=cfg.aiUseFallback;
+  if(cfg.remoteUrl)document.getElementById('remoteUrl').value=cfg.remoteUrl;
+  if(cfg.remoteNick)document.getElementById('remoteNick').value=cfg.remoteNick;
+  if(cfg.remotePref)document.getElementById('remotePref').value=cfg.remotePref;
+  if(cfg.remoteGenderPref)document.getElementById('remoteGenderPref').value=cfg.remoteGenderPref;
+  if(cfg.remoteTimeout)document.getElementById('remoteTimeout').value=cfg.remoteTimeout;
+  if(cfg.remoteAnonymous!==undefined)document.getElementById('remoteAnonymous').checked=cfg.remoteAnonymous;
+  if(cfg.remoteQuickChat!==undefined)document.getElementById('remoteQuickChat').checked=cfg.remoteQuickChat;
+  if(cfg.avatarUrl)document.getElementById('avatarUrl').value=cfg.avatarUrl;
+  if(cfg.voiceUrl)document.getElementById('voiceUrl').value=cfg.voiceUrl;
+  
+  // Update tags based on config
+  const aiReady=!!(cfg.aiKey&&cfg.aiKey.length>5);
+  const remReady=!!cfg.remoteUrl;
+  const btns=document.getElementById('etog').querySelectorAll('button');
+  if(aiReady)btns[1].classList.remove('soon');
+  if(remReady)btns[2].classList.remove('soon');
+  
+  // Update model hint
+  if(cfg.aiProvider)updateModelHint();
+}
+initSetup();
+
+// ===== CONFIG MODAL =====
+function openCfg(){document.getElementById('cfgModal').classList.add('on');}
+function closeCfg(){document.getElementById('cfgModal').classList.remove('on');}
+const MODEL_HINTS={
+  openai:'推荐模型：gpt-4o, gpt-4o-mini, gpt-3.5-turbo',
+  anthropic:'推荐模型：claude-sonnet-4-20250514, claude-opus',
+  deepseek:'推荐模型：deepseek-chat, deepseek-coder',
+  qwen:'推荐模型：qwen-turbo, qwen-plus, qwen-max',
+  doubao:'推荐模型：Doubao-seed-1.8k, Doubao-lite-32k',
+  wenxin:'推荐模型：ernie-4.0-8k, ernie-3.5-8k',
+  glm:'推荐模型：glm-4, glm-4-flash, glm-3-turbo',
+  custom:'请填写你的自定义模型名称'
+};
+
+function updateModelHint(){
+  const provider=document.getElementById('aiProvider').value;
+  document.getElementById('modelHint').textContent=MODEL_HINTS[provider]||MODEL_HINTS.openai;
+}
+
+function saveCfg(){
+  const d={
+    aiProvider:document.getElementById('aiProvider').value,
+    aiKey:document.getElementById('aiKey').value,
+    aiEndpoint:document.getElementById('aiEndpoint').value,
+    aiModel:document.getElementById('aiModel').value,
+    aiTimeout:parseInt(document.getElementById('aiTimeout').value)||30,
+    aiTemperature:parseFloat(document.getElementById('aiTemperature').value)||0.8,
+    aiStyle:document.getElementById('aiStyle').value,
+    aiSysPrompt:document.getElementById('aiSysPrompt').value,
+    aiUseFallback:document.getElementById('aiUseFallback').checked,
+    remoteUrl:document.getElementById('remoteUrl').value,
+    remoteNick:document.getElementById('remoteNick').value,
+    remotePref:document.getElementById('remotePref').value,
+    remoteGenderPref:document.getElementById('remoteGenderPref').value,
+    remoteTimeout:parseInt(document.getElementById('remoteTimeout').value)||60,
+    remoteAnonymous:document.getElementById('remoteAnonymous').checked,
+    remoteQuickChat:document.getElementById('remoteQuickChat').checked,
+    avatarUrl:document.getElementById('avatarUrl').value,
+    voiceUrl:document.getElementById('voiceUrl').value
+  };
+  saveCfgData(d);
+  closeCfg();
+  const aiReady=!!(d.aiKey&&d.aiKey.length>5);
+  const remReady=!!d.remoteUrl;
+  const aiTag=document.getElementById('aiTag');
+  const remoteTag=document.getElementById('remoteTag');
+  if(aiTag){
+    aiTag.textContent=aiReady?'已配置':'即将上线';
+    aiTag.className='cfg-tag '+(aiReady?'ready':'soon');
+  }
+  if(remoteTag){
+    remoteTag.textContent=remReady?'已配置':'即将上线';
+    remoteTag.className='cfg-tag '+(remReady?'ready':'soon');
+  }
+  const btns=document.getElementById('etog').querySelectorAll('button');
+  if(aiReady)btns[1].classList.remove('soon');
+  if(remReady)btns[2].classList.remove('soon');
+}
+
+// Persona export/import
+function exportPersona(){
+  const data={version:1,personalities:P,custom:loadCfg()};
+  const blob=new Blob([JSON.stringify(data,null,2)],{type:'application/json'});
+  const a=document.createElement('a');a.href=URL.createObjectURL(blob);
+  a.download='love-strategist-persona.json';a.click();
+}
+function importPersona(e){
+  const file=e.target.files[0];if(!file)return;
+  const reader=new FileReader();
+  reader.onload=(ev)=>{
+    try{
+      const data=JSON.parse(ev.target.result);
+      if(data.personalities){
+        Object.assign(P,data.personalities);
+        initSetup();
+        alert('人格数据导入成功！');
+      }
+    }catch(err){alert('导入失败：文件格式错误');}
+  };
+  reader.readAsText(file);
+}
+
+// ===== NAV =====
+function show(n){document.querySelectorAll('.page').forEach(p=>p.classList.remove('on'));document.getElementById('P'+n).classList.add('on');}
+function back(){show(0);}
+function go(mode){if(mode==='chat')startChat();else startSim();}
+
+// ===== CHAT =====
+function startChat(){
+  S.hist=[];
+  const tp=P[S.tp];
+  document.getElementById('ct').textContent=`${tp.e} ${tp.n}${gi(S.tg)}`;
+  const stName=STAGES.find(s=>s.k===S.stage).n;
+  document.getElementById('cs').textContent=`${tp.n} · ${stName}`;
+  document.getElementById('ml').innerHTML='';
+  document.getElementById('aa').textContent='开始聊天吧～';
+  document.getElementById('sl').innerHTML='';
+  document.getElementById('aw').style.display='none';
+  // Engine badge
+  const badge=document.getElementById('ebadge');
+  const labels={local:'🏠 本地',ai:'🤖 AI',remote:'🌐 远程'};
+  badge.textContent=labels[S.eng]||labels.local;
+  badge.className='engine-badge '+S.eng;
+  // Init engine
+  engine=createEngine(S.eng);
+  engine.init({myGender:S.mg,myPersonality:S.mp,taGender:S.tg,taPersonality:S.tp,stage:S.stage});
+  show(1);
+  
+  const activeStages=['crush','pursue','flirting','dating_early','dating','stable','longterm','married'];
+  const specialStages={
+    conflict:'当前处于冷战期，TA可能不会主动发消息。试试主动破冰？',
+    crisis:'关系处于危机期，气氛比较紧张。谨慎发言。',
+    breakup:'已分手状态。TA可能不会像以前那样回应。'
+  };
+  
+  if(activeStages.includes(S.stage)){
+    setTimeout(()=>{
+      const msg=pick(tp.open);
+      addMsg('ta',msg);
+      doAdvisor(classify(msg),msg);
+    },600);
+  }else if(specialStages[S.stage]){
+    setTimeout(()=>{
+      addSysMsg('💡 '+specialStages[S.stage]);
+    },400);
+  }
+}
+
+function addMsg(who,text){
+  const ml=document.getElementById('ml');
+  const d=document.createElement('div');d.className='mrow '+who;
+  d.innerHTML=`<div class="mav">${gi(who==='me'?S.mg:S.tg)}</div><div class="mbb">${esc(text)}</div>`;
+  ml.appendChild(d);ml.scrollTop=ml.scrollHeight;
+  S.hist.push({who,text});
+}
+function addSysMsg(text){
+  const ml=document.getElementById('ml');
+  const d=document.createElement('div');d.className='sys-msg';d.textContent=text;
+  ml.appendChild(d);ml.scrollTop=ml.scrollHeight;
+}
+
+function showTyp(){const ml=document.getElementById('ml');const d=document.createElement('div');d.className='typing';d.id='typ';d.innerHTML='<i></i><i></i><i></i>';ml.appendChild(d);ml.scrollTop=ml.scrollHeight;}
+function hideTyp(){const e=document.getElementById('typ');if(e)e.remove();}
+
+async function send(){
+  const inp=document.getElementById('ci');
+  const text=inp.value.trim();
+  if(!text)return;
+  inp.value='';inp.style.height='auto';
+  addMsg('me',text);
+
+  showTyp();
+  try{
+    const ctx={
+      lastMsg:text,
+      myGender:S.mg,myPersonality:S.mp,
+      taGender:S.tg,taPersonality:S.tp,
+      stage:S.stage,history:S.hist
+    };
+    const result=await engine.reply(ctx);
+    hideTyp();
+    addMsg('ta',result.text);
+    doAdvisor(result.msgType||classify(result.text),result.text);
+  }catch(err){
+    hideTyp();
+    addSysMsg('⚠️ 引擎错误：'+err.message);
+  }
+}
+
+function ck(e){
+  if(e.key==='Enter'&&!e.shiftKey){e.preventDefault();send();}
+  setTimeout(()=>{e.target.style.height='auto';e.target.style.height=Math.min(e.target.scrollHeight,80)+'px';},0);
+}
+
+async function doAdvisor(msgType,taResp){
+  try{
+    const ctx={
+      taPersonality:S.tp,stage:S.stage,msgType,
+      lastTaMsg:taResp,history:S.hist,
+      myPersonality:S.mp,myGender:S.mg,taGender:S.tg
+    };
+    const adv=await engine.advise(ctx);
+    document.getElementById('aa').textContent=adv.analysis||'';
+    const sl=document.getElementById('sl');sl.innerHTML='';
+    (adv.suggestions||[]).forEach(s=>{
+      const b=document.createElement('button');b.textContent=s;
+      b.onclick=()=>{document.getElementById('ci').value=s;send();};
+      sl.appendChild(b);
+    });
+    if(adv.warning){
+      document.getElementById('aw').style.display='block';
+      document.getElementById('wt').textContent=adv.warning;
+    }else{
+      document.getElementById('aw').style.display='none';
+    }
+  }catch(e){}
+}
+
+function toggleAdv(){document.getElementById('ap').classList.toggle('hidden');}
+function clrChat(){S.hist=[];document.getElementById('ml').innerHTML='';document.getElementById('aa').textContent='开始聊天吧～';document.getElementById('sl').innerHTML='';document.getElementById('aw').style.display='none';}
+
+// ===== SIMULATION =====
+function startSim(){
+  const mp=P[S.mp],tp=P[S.tp];
+  document.getElementById('sb').innerHTML=`<div class="empty"><span>🎭</span>选择场景点击「生成」<br><b>${mp.e}${mp.n}</b> vs <b>${tp.e}${tp.n}</b></div>`;
+  show(2);
+}
+
+async function genSim(){
+  const topic=document.getElementById('stopic').value;
+  const mp=P[S.mp],tp=P[S.tp];
+  const sb=document.getElementById('sb');
+  sb.innerHTML=`<div class="simpair"><span>${gi(S.mg)} ${mp.e} ${mp.n}</span><span class="vs">VS</span><span>${gi(S.tg)} ${tp.e} ${tp.n}</span></div>`;
+
+  try{
+    const ctx={myPersonality:S.mp,taPersonality:S.tp,myGender:S.mg,taGender:S.tg,stage:S.stage};
+    const turns=await engine.simulate(topic,ctx);
+    let delay=150;
+    turns.forEach((turn)=>{
+      setTimeout(()=>{
+        const isMe=turn.who==='me';
+        const gen=isMe?S.mg:S.tg;
+        const div=document.createElement('div');div.className='sturn';
+        div.innerHTML=`<div class="smsg ${isMe?'l':'r'}"><div class="sa">${gi(gen)}</div><div class="sb">${esc(turn.text)}</div></div><div class="scmt">🧠 ${turn.comment}</div>`;
+        sb.appendChild(div);sb.scrollTop=sb.scrollHeight;
+      },delay);
+      delay+=400+Math.random()*200;
+    });
+  }catch(err){
+    sb.innerHTML+=`<div class="sys-msg">⚠️ 生成失败：${err.message}</div>`;
+  }
+}
+
+// Close modal on overlay click
+document.getElementById('cfgModal').addEventListener('click',e=>{
+  if(e.target===document.getElementById('cfgModal'))closeCfg();
+});
+</script>
+</body>
+</html>
